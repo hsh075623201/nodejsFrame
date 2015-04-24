@@ -1,0 +1,41 @@
+{
+  "name": "bearcat-dao",
+  "version": "0.1.20",
+  "description": "dao O/R mapping, transaction framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt"
+  },
+  "keywords": [
+    "dao",
+    "framework"
+  ],
+  "dependencies": {
+    "pomelo-logger": "0.1.x",
+    "redis": "0.9.x",
+    "mysql": "2.0.x"
+  },
+  "author": {
+    "name": "fantasyni"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "bearcat": "0.1.x",
+    "should": ">=0.0.1",
+    "mocha": ">=0.0.1",
+    "socket.io-client": ">=0.0.1",
+    "jscoverage": ">=0.0.1",
+    "muk": ">=0.0.1",
+    "grunt": "~0.4.2",
+    "grunt-mocha-test": "0.8.x",
+    "grunt-jscoverage": "0.0.3",
+    "grunt-contrib-clean": "0.5.x",
+    "grunt-contrib-jshint": "~0.8.0"
+  },
+  "readme": "## Bearcat-dao -- an O/R mapping dao framework  \nBearcat-dao is an O/R mapping dao framework which provides O/R mapping, dao support for [node.js](http://nodejs.org/).  \nIt is written by [POJOs](https://github.com/bearcatnode/bearcat/wiki/POJOs-based-development) and can be nicely used with [Bearcat](https://github.com/bearcatnode/bearcat).  \n\n## Features  \n* O/R mapping  \n* cacheTemplate  \n* sqlTemplate  \n* transaction  \n\n## Usage\n### Domain Definition\nDomain is a POJO, express the relationship between table and object  \n```\nvar simpleDomain = function() {\n\tthis.id = 0;\n\tthis.name = null;\n}\n\nmodule.exports = {\n\tfunc: Domain,\n\tprimary: [{\n\t\tname: \"id\",\n\t\ttype: \"Long\"\n\t}],\n\tfields: [\"name\"],\n\ttableName: \"test\"\n}\n```\n\nmore in details:  \n* func : constructor function for the domain object\n* primary : an array defines primary fields  \n* fields : an array defines fields except primary fields  \n  - field can be defined by object with ***name***, ***type*** properties, or simply by ***name*** string  \n* tableName : the name of table to be mapped by the ORM object  \n* key : the cached key for conjunctive query domain definition  \n\n### Add to project\n```\nnpm install bearcat-dao --save\n```  \n\nmodify context.json used by your project  \n[placeholds](https://github.com/bearcatnode/bearcat/wiki/Consistent-configuration) can be nicely used to switch between contexts  \n\n```\n\"dependencies\": {\n\t\"bearcat-dao\": \"*\"\n},\n\"beans\": [{\n\t\t\"id\": \"mysqlConnectionManager\",\n\t\t\"func\": \"node_modules.bearcat-dao.lib.connection.sql.mysqlConnectionManager\",\n\t\t\"props\": [{\n\t\t\t\"name\": \"port\",\n\t\t\t\"value\": \"${mysql.port}\"\n\t\t}, {\n\t\t\t\"name\": \"host\",\n\t\t\t\"value\": \"${mysql.host}\"\n\t\t}, {\n\t\t\t\"name\": \"user\",\n\t\t\t\"value\": \"${mysql.user}\"\n\t\t}, {\n\t\t\t\"name\": \"password\",\n\t\t\t\"value\": \"${mysql.password}\"\n\t\t}, {\n\t\t\t\"name\": \"database\",\n\t\t\t\"value\": \"${mysql.database}\"\n\t\t}]\n\t}, {\n\t\t\"id\": \"redisConnectionManager\",\n\t\t\"func\": \"node_modules.bearcat-dao.lib.connection.cache.redisConnectionManager\",\n\t\t\"props\": [{\n\t\t\t\"name\": \"port\",\n\t\t\t\"value\": \"${redis.port}\"\n\t\t}, {\n\t\t\t\"name\": \"host\",\n\t\t\t\"value\": \"${redis.host}\"\n\t\t}]\n\t}]\n```\n\nif you do not use redis, you can remove ***redisConnectionManager*** definition  \n\n### Write daos  \nBearcat-dao provides ***domainDaoSupport*** wrapping basic sql and cache operations  \nadd it with properties dependency injection, and init it by invoking ***initConfig*** method  \nthen you can use domainDaoSupport convenient methods to wrap your own daos  \n\nsimpleDao.js\n```\nvar SimpleDomain = require('simpleDomain');\nvar SimpleDao = function() {\n\tthis.domainDaoSupport = null;\n}\n\nSimpleDao.prototype.init = function() {\n\t// init with SimpleDomain to set up O/R mapping\n\tthis.domainDaoSupport.initConfig(SimpleDomain);\n}\n\n// query list all\n// callback return mapped SimpleDomain array results\nSimpleDao.prototype.getList = function(cb) {\n\tvar sql = ' 1 = 1';\n\treturn this.domainDaoSupport.getListByWhere(sql, null, null, cb);\n}\n\nmodule.exports = {\n\tid: \"simpleDao\",\n\tfunc: SimpleDao,\n\tprops: [{\n\t\tname: \"domainDaoSupport\",\n\t\tref: \"domainDaoSupport\"\n\t}],\n\t\"init\": \"init\"\n}\n```\n\napi reference for [domainDaoSupport](http://bearcatnode.github.io/bearcat-dao/domainDaoSupport.js.html)  \n\n## Transaction\nBearcat-dao provides transaction support based on [Bearcat AOP](https://github.com/bearcatnode/bearcat/wiki/Aspect-Object-Programming). The aspect is [transactionAspect](https://github.com/bearcatnode/bearcat-dao/blob/master/lib/aspect/transactionAspect.js) which provides around advice, when target transaction method calls cb function with ***err***, rollback will be emited, otherwise it will commit the operations.  \nThe pointcut defined is:  \n```\n\"pointcut\": \"around:.*?Transaction$\"\n```  \nTherefore, any POJO method match this pointcut can a transcation method  \nSince transaction must be within the same connection, in Bearcat-dao it is ***transactionStatus***, daos under the transaction method must hold the same transactionStatus  \n```\nSimpleService.prototype.testMethodTransaction = function(cb, txStatus) {\n\tvar self = this;\n\tthis.simpleDao1.transaction(txStatus).addPerson(['aaa'], function(err, results) {\n\t\tif (err) {\n\t\t\treturn cb(err); // if err occur, rollback will be emited\n\t\t}\n\t\tself.simpleDao2.transaction(txStatus).getList([1, 2], function(err, results) {\n\t\t\tif (err) { \n\t\t\t\treturn cb(err); // if err occur, rollback will be emited\n\t\t\t}\n\t\t\tcb(null, results); // commit the operations\n\t\t});\n\t});\n}\n```\n\n## Multi tables query\nWhen doing querys, by default the mapping domain is what you pass into [domainDaoSupport.initConfig](http://bearcatnode.github.io/bearcat-dao/domainDaoSupport.js.html#initConfig) method  \nIn [domainDaoSupport.getList](http://bearcatnode.github.io/bearcat-dao/domainDaoSupport.js.html#getList) and [domainDaoSupport.getListByWhere](http://bearcatnode.github.io/bearcat-dao/domainDaoSupport.js.html#getListByWhere) method, you can pass mutli table specified domain to options to support O/R mapping when doing multi tables query.  \nThis domain is almost the same as [init domain](https://github.com/bearcatnode/bearcat-dao#domain-definition), except for the ***key*** specified as the cache key for this domain, and without needing to specify the ***tableName***\n\n## Using with [pomelo-sync](https://github.com/NetEase/pomelo-sync)\nIn [pomelo](https://github.com/NetEase/pomelo) you can use [pomelo-sync-plugin](https://github.com/NetEase/pomelo-sync-plugin) for convenience  \n\nupdate npm  \n```\nnpm install pomelo-sync-plugin --save\n```\n\nadd with app.js  \n```\nvar sync = require('pomelo-sync-plugin');\napp.use(sync, {sync: {path:__dirname + '/app/dao/mapping', dbclient: {}}});\n``` \n\nwe now use bearcat-dao to handle db operations, therefore dbclient can an empty object to be compatible for pomelo-sync(in pomelo-sync dbclient must be passed)  \n\nthen in your application app/dao/mapping directory, you can write mappings  \n\nhelloSync.js\n```\nvar bearcat = require('bearcat');\nvar helloSync = {};\n\nmodule.exports = helloSync;\n\nhelloSync.hello = function(dbclient, val, cb) {\n\tvar helloService = bearcat.getBean('hello'); // get your service object from bearcat and just call the function\n\treturn helloService.doHello(val, cb);\n}\n```\n\nthen add pomelo-sync exec  \n```\napp.get('sync').exec('helloSync.hello', helloObj.id, helloObj);\t\n```\n\nreferences:  \n* [pomelo-sync](https://github.com/NetEase/pomelo-sync)\n* [pomelo-sync-plugin](https://github.com/NetEase/pomelo-sync-plugin)\n\n## Enable Debug Mode\nrun with BEARCAT_DEBUG flag true  \n```\nBEARCAT_DEBUG=true node xxx.js\n```\n\n## Examples\n- [bearcat-todo](https://github.com/bearcatnode/todo) \nthe tutorial is [bearcat-todo-tutorial](https://github.com/bearcatnode/bearcat/wiki/web-mvc-todo)  ",
+  "readmeFilename": "README.md",
+  "_id": "bearcat-dao@0.1.20",
+  "_shasum": "20245ebb02886a4c651a986d6ae2948a9a1895e6",
+  "_from": "bearcat-dao@0.1.20",
+  "_resolved": "https://registry.npmjs.org/bearcat-dao/-/bearcat-dao-0.1.20.tgz"
+}

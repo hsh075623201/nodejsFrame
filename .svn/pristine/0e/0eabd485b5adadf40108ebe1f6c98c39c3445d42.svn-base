@@ -1,0 +1,38 @@
+define(["util"],function (util) {
+
+	
+	var show = function(){
+		console.log("show....");
+		util.slidePage("security.slide","smartcloud/config/app.json");
+	};
+
+	var init = function(){
+		console.log("user init ...");
+
+		var config = {
+			"sAjaxSource":"http://10.25.76.206:18080/api/smartcloudServer/security/users/list?app_key=fdioanferik&app_secret=secret1&callback=?",
+			"aoColumns":[
+					{ //自定义列多选框
+			            "mDataProp": "_id",
+			            "sClass": "center",
+			            'bSortable': false,
+			            "fnRender": function (obj) {
+			                return "1";
+			            }
+			        },
+		            { "sClass": "center", "mDataProp": "username"},
+		            { "sClass": "center" ,"mDataProp": "email", },
+		            { "sClass": "center", "mDataProp": "gender" },
+		            { "sClass": "center", "mDataProp": "status" }
+        		]
+		}
+
+		util.renderDataTable("#users-table",config);
+	}
+
+	return {
+		init:init,
+		show:show
+	}
+	
+});

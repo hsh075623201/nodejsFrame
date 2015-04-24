@@ -1,0 +1,42 @@
+var mongoose = require('../../../../../../lib/db/mongodb.js');
+var RoleSchema = require('../../domain/roleModel.js').RoleSchema;
+var Role = mongoose.model('role', RoleSchema);
+
+
+
+var RoleService = function() {
+};
+
+//验证是否已存在编码或名称
+RoleService.prototype.validate = function(filter,callback){
+	Role.find(filter,function(error,doc){
+		return callback(error,doc);
+	});
+}
+//新增角色
+RoleService.prototype.add = function(obj,callback){
+	var _this = this;
+	var filter = {$or:[{"name":obj.name},{"code":obj.code}]};
+	this.validate(filter,function(error,doc){
+		if(error){
+			return callback(error);
+		}else{
+			if(doc.length>0){
+				return callback("该角色名称或编码已存在！");
+			}else{
+				_this.save(obj,function(error,doc){
+					return callback(error,doc);
+				})
+			}
+		}
+	});
+};
+//保存
+RoleService.prototype.save = function(obj,callback){
+	var newRole = new Role(obj);
+	newRole.save(function(error,doc){
+		return callback(error,doc);
+	})
+};
+
+module.exports = RoleService;

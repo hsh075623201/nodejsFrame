@@ -1,0 +1,5 @@
+<div ng-page>
+<h1>user</h1>
+<button id="show" ng-click="show">显示</button>
+<button id="hide" ng-click="hide">隐藏</button>
+</div>

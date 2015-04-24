@@ -1,0 +1,11 @@
+{
+    "appenders": [
+        { "type": "console" },
+        {
+            "type": "dateFile",
+            "pattern": "-yyyy-MM-dd",
+            "alwaysIncludePattern": true
+        }
+    ],
+    "replaceConsole": true
+}

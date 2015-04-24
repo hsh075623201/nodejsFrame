@@ -1,0 +1,23 @@
+var config = require('../config/config.json');
+var crypto = require('crypto');
+exports.isAdmin = function(name){
+	if(name=="sysadmin"){
+		return true;
+	}else{
+		return false;
+	}
+},
+exports.isAccessByUserName = function(name,path){
+	return true;
+},
+exports.filterUrl = function (path){
+    for(var i =0 ;i<config.filterUrl.length;i++){
+        if(path.indexOf(Config.filterUrl[i])!=-1){
+            return true ;
+        }
+    }
+    return false;
+},
+exports.parsePwd = function(pwd){
+	return crypto.createHash('md5').update(pwd).digest('base64');
+}

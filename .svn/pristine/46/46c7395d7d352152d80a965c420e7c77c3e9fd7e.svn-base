@@ -1,0 +1,15 @@
+var RoleCmd = function(){
+	this.roleService = null;
+};
+//新增角色
+RoleCmd.prototype.add = function(req,res){
+		console.log(".....");
+	var obj = JSON.parse(req.body.params);
+	obj.createUsername = req.session.user.username;
+	console.log(".....");
+    this.roleService.add(obj,function(error,result){
+        return res.json(result,error);
+    })
+}
+
+module.exports = RoleCmd;

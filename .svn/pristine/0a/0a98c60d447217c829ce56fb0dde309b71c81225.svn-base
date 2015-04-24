@@ -1,0 +1,16 @@
+{
+    "modules": [
+        {"module":"upload","caption":"上传管理","desc":"上传管理","commands":[
+            {"cmd": "upload","id":"core:uploadCmd","caption":"上传","desc":"上传","path":"upload","filename":"uploads","methods":[
+                {"method":"upload","caption":"文件上传","desc":"文件上传"},
+                {"method":"uploadImage","caption":"图片上传","desc":"图片上传"},
+                {"method":"saveImage","caption":"图片保存","desc":"图片保存"}
+            ]}
+        ]},
+        {"module":"common","caption":"通用函数管理","desc":"通用函数管理","commands":[
+            {"cmd": "basic","id":"core:basicCmd","caption":"基本函数","desc":"基本函数","path":"common","filename":"basic","methods":[
+                {"method":"formatDate","caption":"时间格式化","desc":"时间格式化"}
+            ]}
+        ]}
+    ]
+}

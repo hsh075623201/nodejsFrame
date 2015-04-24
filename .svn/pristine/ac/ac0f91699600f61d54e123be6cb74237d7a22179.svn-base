@@ -1,0 +1,46 @@
+
+var userService = require('../../service/basic/userService.js');
+
+
+var UserCmd = function() {
+    this.userService = null;
+};
+
+//登录
+UserCmd.prototype.login = function(req,res){
+   
+    var obj = {
+        "username": req.body.username,
+        "password": req.body.password
+    }
+    this.userService.getUser(obj,function(error,result){
+        console.log("user[loginValidate]:"+result);
+        if(result&&result.length>0){
+             req.session.user = result;
+            //todo 加载用户的redis缓存  还没做  
+            return res.redirect("/"); 
+        }else{
+            return res.redirect("/login");
+        }
+    })
+};
+
+UserCmd.prototype.reg = function(req,res){
+    var obj = {
+        "username":req.body.username,
+        "password":req.body.password,
+        "email":req.body.email
+    }
+    this.userService.reg(obj,function(error,result){
+        if(error){
+            return res.json(error);
+        }else{
+             req.session.user = result;
+            //todo 加载用户的redis缓存  还没做  
+            return res.redirect("/");
+        }
+    })
+}
+
+
+module.exports = UserCmd;

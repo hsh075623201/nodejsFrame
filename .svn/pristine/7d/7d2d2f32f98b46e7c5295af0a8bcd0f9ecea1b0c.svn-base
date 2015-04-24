@@ -1,0 +1,85 @@
+requirejs.config({
+    baseUrl: 'javascripts',
+    paths: {
+        jquery:'import/jquery-1.8.3',
+        jqueryValidate:'import/jquery.validate.min',
+        bootstrap:'import/bootstrap.min',
+        hashchange:'import/jquery.ba-hashchange',
+        ace:'import/ace.min',
+        pageslide:'import/jquery.pageslide.min',
+        util:'common/util'
+    },
+    shim: {
+        'hashchange': { 
+            deps: ['jquery'],
+            exports: 'hashchange'
+        },
+        'ace':{
+           deps: ['jquery'],
+            exports: 'ace'
+        },
+        jqueryValidate:{
+            deps:['jquery']
+        },
+        bootstrap:{
+            deps:['jquery']
+        },
+        pageslide:{
+            deps:['jquery']
+        }
+    }
+});
+
+// Start the main app logic.
+requirejs(['jquery','util','hashchange','jqueryValidate','bootstrap','ace'],function   ($,util) {
+    
+    $(window).hashchange( function(){
+        var hashStr = "";//页面定位
+        hashStr = location.hash.replace("#","");
+        util.parsePage(hashStr,"smartcloud/config/app.json");
+        /*var hashPathArr = hashStr.split(".");
+        $.getJSON("smartcloud/config/app.json",function(config){
+            //获取匹配的配置信息
+            var jsPath,htmlPath,initMethod,components;
+            for(var i=0,len=config.pages.length;i<len;i++){
+                if(hashPathArr[0] == config.pages[i].module){
+                    for(var j=0,subLen=config.pages[i].pages.length;j<subLen;j++){
+                        if(hashPathArr[1] == config.pages[i].pages[j].id){
+                            jsPath = config.pages[i].pages[j].js;
+                            htmlPath = config.pages[i].pages[j].url;
+                            initMethod = config.pages[i].pages[j].method;
+                            components = config.pages[i].pages[j].components;
+                        }
+                    }
+                }
+            }
+            //加载页面
+            $("#page").load(config.path+htmlPath,function() {
+                //加载对应的JS
+                require([jsPath],function(userCtrl){
+                    userCtrl[initMethod]();//页面初始化方法
+                    //为页面属性赋予事件功能
+                    $("*[ng-click]").each(function(index, val) {
+                         $(this).click(function(event) {
+                              var method = $(this).attr("ng-click");//获取属性值
+                              userCtrl[method]();//赋予事件功能
+                         });
+                    });
+                })
+            });
+
+            //页面需限制权限列表
+            var limitComponents = [];
+            for(var i=0,len=components.length;i<len;i++){
+                if(components[i].limit){
+                    limitComponents.push("component_smartcloud."+hashStr+"."+components[i].component);
+                }
+            }
+            //用户具有的权限列表
+            
+        })*/
+        
+    });
+    $(window).hashchange();//触发事件
+
+});

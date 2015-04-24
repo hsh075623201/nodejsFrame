@@ -1,0 +1,44 @@
+requirejs.config({
+    baseUrl: 'javascripts',
+    paths: {
+        jquery:'import/jquery-1.8.3',
+        jqueryValidate:'import/jquery.validate.min',
+        bootstrap:'import/bootstrap.min',
+        hashchange:'import/jquery.ba-hashchange',
+        ace:'import/ace.min',
+        pageslide:'import/jquery.pageslide.min',
+        util:'common/util'
+    },
+    shim: {
+        'hashchange': { 
+            deps: ['jquery'],
+            exports: 'hashchange'
+        },
+        'ace':{
+           deps: ['jquery'],
+            exports: 'ace'
+        },
+        jqueryValidate:{
+            deps:['jquery']
+        },
+        bootstrap:{
+            deps:['jquery']
+        },
+        pageslide:{
+            deps:['jquery']
+        }
+    }
+});
+
+// Start the main app logic.
+requirejs(['jquery','util','hashchange','jqueryValidate','bootstrap','ace'],function   ($,util) {
+    
+    $(window).hashchange( function(){
+        var hashStr = "";//页面定位
+        hashStr = location.hash.replace("#","");
+        util.parsePage(hashStr,"smartcloud/config/app.json");
+        
+    });
+    $(window).hashchange();//触发事件
+
+});

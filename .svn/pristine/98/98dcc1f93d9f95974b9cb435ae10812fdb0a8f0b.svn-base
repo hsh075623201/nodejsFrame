@@ -1,0 +1,22 @@
+{
+    "name": "smartcloud",
+    "namespace":"smartcloud",
+    "beans":[
+        {
+            "id": "userCmd",
+            "func": "cmd.basic.userCmd",
+            "props": [{
+                "name": "userService",
+                "ref": "smartcloud:userService"
+            }]
+        },
+        {
+            "id": "userService",
+            "func": "service.basic.userService",
+            "props": [{
+                "name": "paginationCmd",
+                "ref": "core:paginationCmd"
+            }]
+        }
+    ]
+}

@@ -1,0 +1,58 @@
+define(["util","common/component"],function (util,component) {
+
+	var url = "smartcloud/config/app.json";
+	var init = function(){
+		var config = {
+			"ordering":false,
+			"sAjaxSource":"http://10.25.76.206:18080/api/smartcloudServer/security/users/list?app_key=fdioanferik&app_secret=secret1&callback=?",
+			"aoColumns":[
+					{ //自定义列多选框
+			            "mDataProp": "_id",
+			            "sClass": "center",
+			            'bSortable': false,
+			            "mRender": function (_id) {
+			                return component.getTableRadio(_id);
+			            }
+			        },
+		            { "sClass": "center", 'bSortable': false,"mDataProp": "username"},
+		            { "sClass": "center", 'bSortable': false,"mDataProp": "email", },
+		            { "sClass": "center", 'bSortable': false,"mDataProp": "gender" },
+		            { "sClass": "center", 'bSortable': false,"mDataProp": "status" }
+        		]
+		}
+		util.renderDataTable("#users-table",config);
+	};
+	//新增用户
+	var addUser = function(){
+		util.slidePage("user.add",url);
+	};
+	//查询用户
+	var queryUser = function(){
+		alert("queryUser...");
+	};
+	//编辑用户
+	var  editUser = function(){
+		alert("editUser...");
+	};
+	//删除用户
+	var deleteUser = function(){
+		alert("deleteUser...");
+	};
+	//用户权限信息列表
+	var userPermission = function(){
+		alert("userPermission...");
+	};
+
+
+
+
+	return {
+		init:init,
+		addUser:addUser,
+		queryUser:queryUser,
+		editUser:editUser,
+		deleteUser:deleteUser,
+		userPermission:userPermission
+	}
+	
+});

@@ -1,0 +1,180 @@
+var Bearcat = require('bearcat');
+var url = require('url');
+var Response = require("../lib/response.js");
+var util = require("./util.js");
+var appServers = require('../config/app-server.json');
+
+
+exports.loginRender = function(req, res) {
+    return res.render('login', {
+        title: '用戶登入',
+        error:"error",
+        layout:false
+    });
+},
+exports.logoutRender =  function(req, res) {
+    req.session.user = null;
+    return res.redirect('/');
+},
+exports.checkLogin = function (req, res, next) {
+    if (!req.session.user) {
+        res.send('error', '未登入');
+        return res.redirect('/login');
+    }
+    next();
+},
+exports.checkNotLogin = function (req, res, next) {
+    if (req.session.user) {
+        res.send('error', '已登入');
+        return res.redirect('/');
+    }
+    next();
+},
+exports.validatePermission = function (req, res, next){
+    var pathArr = url.parse(req.originalUrl).pathname.split("/");
+    pathArr.shift();
+    var path = pathArr.join("/");
+    //过滤url权限判断
+    if(util.filterUrl(path)){
+        next();
+    }else{
+        var username =req.session.user.username;
+        if(util.isAdmin(username)){
+            next();
+        }else{
+            //判断 是否具有该权限
+			if(util.isAccessByUserName(username,path)){
+				next();
+			}else{
+				return res.end({"message":"无权限访问,请与管理员联系"});
+				//return res.render("error",{"message":"无权限访问,请与管理员联系"})；
+			}
+        }
+
+    }
+},
+exports.urlParse = function urlParse(req,res){
+    var response = new Response(res);
+    var pathname = url.parse(req.originalUrl).pathname;
+    var pathArr = pathname.split('/');
+    var method=pathArr.pop();//方法
+    var fileCode = pathArr.pop();//cmd
+    var moduleCode = pathArr.pop();//模块名
+    var appServerCode = pathArr.pop();//应用名
+    var appServerInfo = appServers.apps;
+    var appServerPath;
+    for(var i=0 ;i<appServerInfo.length;i++){
+        if(appServerInfo[i].code==appServerCode){
+            appServerPath=appServerInfo[i].path;
+            break;
+        }
+    }
+    var filePath;
+    var fileObj;
+    try{
+        fileObj= require("../src/"+appServerPath+"/command.json");
+        var fileInfo = fileObj.modules;
+        for(var i=0;i<fileInfo.length;i++){
+            if(fileInfo[i].module==moduleCode){
+                var flag=false;
+                for(var j =0; j<fileInfo[i].commands.length;j++){
+                    if(fileInfo[i].commands[j].cmd==fileCode){
+                        filePath=fileInfo[i].commands[j].path+"/"+fileInfo[i].commands[j].filename;
+                        var beanId = fileInfo[i].commands[j].id;
+                        Bearcat.getBean(beanId)[method](req,response);
+                        flag=true;
+                        break;
+                    }
+                }
+                if(flag){
+                    break;
+                }
+            }
+        }
+    }catch (err){
+        return res.render('error',{"message":err});
+    }
+},
+exports.indexTemplate = function (req,res,next){
+    var arr = req.originalUrl.split("/");
+    //自动添加斜杠
+    if(arr.length==2){
+        return res.redirect(req.originalUrl+"/");
+    }
+    if(arr.length==3&&arr[2]==""){
+        var flag = false;
+        for(var i=0;i<appServers.apps.length;i++){
+            if(appServers.apps[i].code==arr[1]){//匹配server
+                var indexPath = appServers.apps[i].indexPath;
+                var path = indexPath.split("/");
+                var fileObj;
+                try{
+                    var beanId = "";
+                    fileObj=require("../src/"+appServers.apps[i].path+"/command.json");
+                    var fileInfo = fileObj.modules;
+                    flag =false;
+                    for(var k=0;k<fileInfo.length;k++){
+                        if(fileInfo[k].module == path[0]){
+                            for(var j=0;j<fileInfo[k].commands.length;j++){
+                                if(fileInfo[k].commands[j].cmd == path[1]){
+                                    beanId = fileInfo[k].commands[j].id;
+                                    Bearcat.getBean(beanId)[path[2]](req,res);
+                                    flag=true;
+                                    break;
+                                }
+                            }
+                            if(flag){
+                                break;
+                            }
+                        }
+                    }
+                    if(flag){
+                        break;
+                    }
+
+                }catch(err){
+                    logger.error("创建首页对象失败！"+err);
+                    return res.render('error',{"message":err});
+                }
+            }
+        }
+         if(!flag){
+         	return res.render('error',{"message":server对象没有自定义模板});
+         }
+    }else{
+        next();
+    }
+},
+exports.login = function(req, res) {
+	Bearcat.getBean("smartcloud:userCmd")["login"](req,res);
+},
+exports.reg = function(req,res){
+    Bearcat.getBean("smartcloud:userCmd")["reg"](req,res);
+},
+exports.index= function(req, res) {
+    return res.render("smartCloud",{
+        "title":"智慧云后台管理系统",
+        "name":req.session.user.username,
+        "photo":"",
+        "menu":[{"name":"用户与权限管理","urlAddress":"","picClass":"fa-globe","MenuDesc":"系统管理","createUsername":"System","code":"menu_smartcloud_root","pCode":"menu_systemRoot","sortNum":2,"isParent":"true","children":[
+                {"name":"用户列表","urlAddress":"user.list","picClass":"fa-globe","MenuDesc":"用户列表","createUsername":"System","code":"menu_smartcloud_user","pCode":"menu_smartcloud_root","sortNum":2.1,"isParent":"false"},
+                {"name":"角色列表","urlAddress":"role.list","picClass":"fa-globe","MenuDesc":"角色列表","createUsername":"System","code":"menu_smartcloud_role","pCode":"menu_smartcloud_root","sortNum":2.2,"isParent":"false"},
+                {"name":"部门列表","urlAddress":"smartcloud.security.dept","picClass":"fa-globe","MenuDesc":"部门列表","createUsername":"System","code":"menu_smartcloud_dept","pCode":"menu_smartcloud_root","sortNum":2.3,"isParent":"false"},
+                {"name":"用户组列表","urlAddress":"smartcloud.security.userGroup","picClass":"fa-globe","MenuDesc":"用户组列表","createUsername":"System","code":"menu_smartcloud_userGroup","pCode":"menu_smartcloud_root","sortNum":2.4,"isParent":"false"},
+                {"name":"资源树","urlAddress":"smartcloud.security.resource","picClass":"fa-globe","MenuDesc":"资源树","createUsername":"System","code":"menu_smartcloud_resource","pCode":"menu_smartcloud_root","sortNum":2.5,"isParent":"false"},
+                {"name":"授权管理","urlAddress":"smartcloud.security.authorize","picClass":"fa-globe","MenuDesc":"授权管理","createUsername":"System","code":"menu_smartcloud_authorize","pCode":"menu_smartcloud_root","sortNum":2.6,"isParent":"false"}
+
+            ]},
+
+
+            {"name":"菜单管理","urlAddress":"","picClass":"fa-globe","MenuDesc":"菜单管理","createUsername":"System","code":"menu_smartcloud_menuManage","pCode":"menu_systemRoot","sortNum":3,"isParent":"true","children":[
+                {"name":"菜单列表","urlAddress":"smartcloud.menu.menu","picClass":"fa-globe","MenuDesc":"菜单列表","createUsername":"System","code":"menu_smartcloud_menu","pCode":"menu_smartcloud_menuManage","sortNum":3.1,"isParent":"false"}
+            ]},
+            {"name":"消息管理","urlAddress":"","picClass":"fa-globe","MenuDesc":"消息管理","createUsername":"System","code":"menu_smartcloud_noticeManage","pCode":"menu_systemRoot","sortNum":4,"isParent":"true","children":[
+                {"name":"任务列表","urlAddress":"smartcloud.notice.task","picClass":"fa-globe","MenuDesc":"任务列表","createUsername":"System","code":"menu_smartcloud_task","pCode":"menu_smartcloud_noticeManage","sortNum":4.1,"isParent":"false"},
+                {"name":"通知列表","urlAddress":"smartcloud.notice.notice","picClass":"fa-globe","MenuDesc":"通知列表","createUsername":"System","code":"menu_smartcloud_notice","pCode":"menu_smartcloud_noticeManage","sortNum":4.2,"isParent":"false"},
+                {"name":"通知类型","urlAddress":"smartcloud.notice.noticeType","picClass":"fa-globe","MenuDesc":"通知类型","createUsername":"System","code":"menu_smartcloud_noticeType","pCode":"menu_smartcloud_noticeManage","sortNum":4.3,"isParent":"false"}
+
+            ]}]
+    });
+}

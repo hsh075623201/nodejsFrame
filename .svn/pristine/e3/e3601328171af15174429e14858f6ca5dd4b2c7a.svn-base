@@ -1,0 +1,72 @@
+define(["import/bootbox.min"],function (bootbox) {
+
+	var alert = function(message,width){
+			var dialog = bootbox.dialog({
+	        message: message,
+	        title: "<i class='fa fa-exclamation-triangle orange'></i> 提示信息",
+	        buttons:
+	        {
+	            "success" :
+	            {
+	                "label" : "<i class='fa fa-check'></i> 确定",
+	                "className" : "btn-warning"
+	            }
+	        }
+	    }).css("z-index",9999999999999);
+	    if(width){
+	        $(".modal-dialog").width(width);
+	    }
+	};
+	var confirm = function (message,callback,width){
+	    bootbox.dialog({
+	        message: message,
+	        title: "<i class='fa fa-question-circle orange'></i> 确认信息",
+	        buttons:
+	        {
+	            "success" :
+	            {
+	                "label" : "<i class='fa fa-check'></i> 确定",
+	                "className" : "btn-danger",
+	                "callback":function(){
+	                    callback();
+	                }
+	            },
+	            "reject" :
+	            {
+	                "label" : "<i class='fa fa-times'></i> 取消",
+	                "className" : "btn-info"
+	            }
+	        }
+	    }).css("z-index",9999999999999);
+
+	    if(width){
+	        $(".modal-dialog").width(width);
+	    }
+	};
+	var prompt = function(title,callback){
+	    var promptOptions = {
+	        title: title,
+	        buttons: {
+	            confirm: {
+	                label: "<i class='fa fa-check'></i> 确认",
+	                "className" : "btn-danger"
+
+	            },
+	            cancel:{
+	                label: "<i class='fa fa-times'></i>取消",
+	                "className" : "btn-info"
+	            }
+	        },
+	        inputType:"textarea",
+	        callback: function(result){
+	            callback(result);
+	        }
+	    };
+	    bootbox.prompt(promptOptions);
+	};
+    return {
+        alert:alert,
+        confirm:confirm,
+        prompt:prompt
+    }
+});

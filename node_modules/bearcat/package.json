@@ -1,0 +1,60 @@
+{
+  "name": "bearcat",
+  "version": "0.3.2",
+  "description": "Magic, self-described javaScript objects build up elastic, maintainable front-backend javaScript applications",
+  "main": "index.js",
+  "bin": {
+    "bearcat": "./bin/bearcat-bin.js"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bearcatjs/bearcat.git"
+  },
+  "keywords": [
+    "IoC",
+    "AOP",
+    "dependency",
+    "injection",
+    "consistent",
+    "configuration",
+    "hot reload",
+    "front-backend",
+    "sharable codes",
+    "asynchronous script loading",
+    "magic, self-described javaScript objects"
+  ],
+  "dependencies": {
+    "pomelo-logger": "0.1.x",
+    "commander": "2.x"
+  },
+  "browser": {
+    "pomelo-logger": "./shim/logger.js"
+  },
+  "author": {
+    "name": "fantasyni"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "expect.js": "~0.3.1",
+    "mocha": ">=0.0.1",
+    "grunt": "~0.4.2",
+    "blanket": "1.1.x",
+    "grunt-browserify": "3.x",
+    "grunt-mocha-test": "0.8.x",
+    "grunt-contrib-clean": "0.5.x",
+    "grunt-contrib-uglify": "~0.3.2"
+  },
+  "readme": "## Bearcat\nBearcat makes plain javaScript object magic and expressive, which makes it easy to resolve dependency through DI and declarative middleware service through AOP. Bearcat supports frontend browser, backend [node.js](http://nodejs.org/) , and javaScript based hybrid apps, all you write are plain old javaScript objects, so codes can be easilly shared. Bearcat provides an infrastructural backbone to manage business objects so that developers can focus on application-level business logic. \n\n> ###Magic, self-described javaScript objects build up elastic, maintainable front-backend javaScript applications\n  \n![](http://bearcatjs.github.io/bearcat/images/bearcat-logo.png)\n[![Build Status](https://travis-ci.org/bearcatnode/bearcat.svg?branch=master)](https://travis-ci.org/bearcatnode/bearcat)\n\n * Homepage: <http://bearcatjs.org/>\n * Guide: <http://bearcatjs.org/guide/>\n * API Reference: <http://bearcatjs.org/api/>\n * Examples: <http://bearcatjs.org/examples/>\n * Blog: <http://bearcatjs.org/blog/>\n * Mailing list: <https://groups.google.com/group/bearcatjs/>\n * Wiki: <https://github.com/bearcatjs/bearcat/wiki/>\n * Issues: <https://github.com/bearcatjs/bearcat/issues/>\n * Tags: \n nodejs, browser, hybrid apps, POJO, IoC, AOP,  \n consistent configuration, front-backend, asynchronous script loading\n\n## Features\n### Simple   \nWrite simple plain old javaScript objects, that's it\n### Efficient  \nDependency injection with asynchronous loading(frontend), no need to use define, require, or a bundle file\n### Reuseable  \nSimple javaScript objects can be used for frontend and backend(node.js) without any modifications\n### Easy  \nEasy to use, all javaScript objects will be scaned ready for you, no need to write extra complex, messy configuration files\n### Powerful  \nPowered by dependency injection, AOP based declarative middleware services\n### Moduler  \nYou just use only those parts that you need\n\n## Install\n### Frontend\n* standalone :   \n[bearcat.js](https://raw.githubusercontent.com/bearcatjs/bearcat/master/dist/bearcat.js)  \n[bearcat.min.js](https://raw.githubusercontent.com/bearcatjs/bearcat/master/dist/bearcat.min.js)\n\n* bower : \n```\nbower install bearcat\n```\n\n* browserfiy : \n```\nnpm install bearcat\n```\n\n### Backend(nodejs)\n```\nnpm install bearcat\n```\n\n## License\n\n(The MIT License)\n\nCopyright (c) fantasyni and other contributors\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/bearcatjs/bearcat/issues"
+  },
+  "homepage": "https://github.com/bearcatjs/bearcat",
+  "_id": "bearcat@0.3.2",
+  "_shasum": "ebec6c23899f3af438ded8360609d6e07a468bb4",
+  "_from": "bearcat@0.3.2",
+  "_resolved": "https://registry.npmjs.org/bearcat/-/bearcat-0.3.2.tgz"
+}

@@ -1,0 +1,194 @@
+
+define(["common/component","datatables","datatables.bootstrap","pageslide"],function (component) {
+	//获取匹配的配置信息
+	var getConfig = function(hashStr,url,callback){
+
+        //TODO　hashStr 权限检查
+		$.getJSON(url,function(config){
+			hashStr = hashStr||config.index;
+            var hashPathArr = hashStr.split(".");
+			var retObj = {"appPath":config.path};
+			var flag = true ;
+            for(var i=0,len=config.pages.length;i<len;i++){
+                if(hashPathArr[0] == config.pages[i].module){
+                    retObj.jsPath = config.pages[i].js;
+                    for(var j=0,subLen=config.pages[i].pages.length;j<subLen;j++){
+                        if(hashPathArr[1] == config.pages[i].pages[j].id){
+                            retObj.htmlPath = config.pages[i].pages[j].url;
+                            retObj.initMethod = config.pages[i].pages[j].method;
+                            retObj.components = config.pages[i].pages[j].components;
+                            flag = false;
+                        }
+                    }
+                }
+            }
+            if(flag){
+            	component.alert("URL 地址错误！");
+            	return;
+            }
+            return callback(retObj);
+		})
+	};
+	//页面控制
+	var pageController = function(hashStr,config){
+		//给页面赋予属性
+		$("div[ng-page]").each(function(){
+	        if(typeof($(this).attr("ng-page-id"))=="undefined"){
+	            $(this).attr("ng-page-id",hashStr);
+	        }
+	    });
+		//加载对应的JS
+        require([config.jsPath],function(objCtrl){
+            if(config.initMethod){
+                objCtrl[config.initMethod]();//页面初始化方法
+            }
+            //为页面属性赋予事件功能
+            $("div[ng-page-id='"+hashStr+"']").find("*[ng-click]").each(function(index, val) {
+                 $(this).click(function(event) {
+                      var method = $(this).attr("ng-click");//获取属性值
+                      objCtrl[method]();//赋予事件功能
+                 });
+            });
+
+            //页面需限制权限列表
+	        var limitComponents = [];
+	        for(var i=0,len=config.components.length;i<len;i++){
+	            if(config.components[i].limit){
+	                limitComponents.push("component_smartcloud."+hashStr+"."+config.components[i].component);
+	            }
+	        }
+	        //用户具有的权限列表 todo
+
+             //select 绑定option
+            $("div[ng-page-id='"+hashStr+"']").find("select[optionCode]").each(function(){
+                var optionCode = $(this).attr("optionCode");//类型 + 方法KEY
+                var optionKey = $(this).attr("optionKey");
+                var optionValue = $(this).attr("optionValue");
+                var id = $(this).attr("id");
+                var optionCodeArr = optionCode.split(".");
+                $("#"+id).empty();
+                $.getJSON("/config/select.json",function(select){
+                     if(optionCodeArr[0]=="JSON"){
+                        var optionJSON = select.JSON[optionCodeArr[1]];
+                        var str = "";
+                        for(var i=0;i<optionJSON.length;i++){
+                            str += "<option value="+optionJSON[i].key+">"+optionJSON[i].value+"</option>";
+                        }
+                        $("#"+id).append(str);
+                    }
+                });
+            });
+           
+        })
+	};
+	//页面解析
+	var parsePage = function(hashStr,url,pos){
+		getConfig(hashStr,url,function(config){
+			//加载页面
+            pos = pos||"#page";
+            $(pos).load(config.appPath+config.htmlPath,function() {
+            	//对加载的页面进行处理
+                pageController(hashStr,config);
+            });
+		})
+	};
+
+
+	//返回结果统一处理
+	var resProcess = function(data,callback){
+		var _this = this;
+	    if(data.status==-1){
+	        component.alert("运行异常，异常代码："+JSON.parse(data.message).code+",请与管理员联系！");
+	        return ;
+	    }else{
+	        return callback(data.doc);
+	    }
+	};
+    //get 请求
+    var get = function(path,params,callback){
+    	var _this = this;
+    	params.random = Math.random();
+    	$.get(path, params,function(data){
+            return _this.resProcess(data,callback);
+        });
+    };
+    //post 请求
+    var post = function(path,params,callback){
+    	var _this = this;
+    	var params = JSON.stringify(params);
+	    $.post(path,{"params":params},function(data){
+	        return _this.resProcess(data,callback);
+	    })  ;
+    };
+    //侧滑页面显示
+    var slidePage = function(hashStr,url,callback){
+    	getConfig(hashStr,url,function(config){
+			//加载页面
+            $.pageslide({href:config.appPath+config.htmlPath,direction:"left"},function() {
+            	//对加载的页面进行处理
+                pageController(hashStr,config);
+            });
+		})
+    };
+
+    //隐藏侧滑页面
+    var slideHide = function(){
+    	$.pageslide.close();
+    };
+    
+    //jquery DataTable
+    var renderDataTable = function(pos,config){
+        var defaultConfig = {
+            "bProcessing": true,//是否显示正在处理信息
+            "bServerSide": true,//是否启动服务器端数据导入，即要和sAjaxSource结合使用
+            "bDestroy":true,//用于当要在同一个元素上执行新的dataTable绑定时，将之前的那个数据对象清除掉，换以新的对象设置
+            'bPaginate': true,//是否分页
+            "bFilter": false,
+            "oLanguage": {
+                "sProcessing": "正在加载中......",
+                "sInfo": "当前显示 _START_ 到 _END_ 条，共 _TOTAL_ 条记录"
+             },
+             //"sAjaxSource":config.sAjaxSource,//后台访问地址
+             //"fnServerParams"://发送额外的数据
+             "fnServerData":function(sSource, aoData, fnCallback ){
+                $.ajax( {
+                    "type": "GET",
+                    "contentType": "application/json",
+                    "url": sSource,
+                    "dataType": "json",
+                    "data": aoData, //以json格式传递
+                    "success": function(resp) {
+                        if(resp.error!=undefined){
+                            component.alert(resp.error);
+                            return;
+                        }
+                        if(resp=="NoPermission"){
+                            var object={};
+                            object.aaData=[{"permission":"NoPermission"}];
+                            resp=object;
+                        }
+                        fnCallback(resp.doc); //服务器端返回的对象的returnObject部分是要求的格式
+                    }
+                });
+             },//用于替换默认发到服务端的请求操作
+             //"aoColumns":config.columns//定义列
+             //"fnPreDrawCallback"://用于在开始绘制之前调用，返回false的话，会阻止draw事件发生；返回其它值，draw可以顺利执行
+        }
+        //自定义
+        for(var key in config){
+            defaultConfig[key] = config[key];
+        }
+
+        $(pos).dataTable(defaultConfig);
+    };
+
+    return {
+    	parsePage:parsePage,
+    	get:get,
+    	post:post,
+    	slidePage:slidePage,
+    	sildeHide:slideHide,
+        renderDataTable:renderDataTable
+       
+    }
+});

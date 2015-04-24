@@ -1,0 +1,14 @@
+{
+    "name": "core",
+    "namespace":"core",
+    "beans":[
+        {
+            "id": "uploadCmd",
+            "func": "upload.uploads"
+        },
+        {
+            "id": "basicCmd",
+            "func": "common.basic"
+        }
+    ]
+}

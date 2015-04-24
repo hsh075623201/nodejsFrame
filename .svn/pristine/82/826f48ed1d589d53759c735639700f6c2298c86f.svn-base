@@ -1,0 +1,17 @@
+{
+	"name":"smartcloud",
+	"path":"smartcloud",
+	"server":"smartcloudServer",
+	"index":"user.list",
+	"pages":[
+		{"module":"user","caption":"用户管理","desc":"用户管理","js":"/javascripts/smartcloud/userController.js","pages":[
+			{"id":"list","caption":"用户列表","desc":"用户列表","url":"/html/user/userList.html","method":"init","components":[
+				{"component":"addUser","caption":"新增用户按钮","desc":"新增用户按钮","limit":false},
+				{"component":"queryUser","caption":"查询用户按钮","desc":"查询用户按钮","limit":true}
+			]},
+			{"id":"add","caption":"新增用户","desc":"新增用户","url":"/html/user/userAdd.html","method":"","components":[
+				
+			]}
+		]}
+	]
+}

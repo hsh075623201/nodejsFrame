@@ -1,0 +1,56 @@
+/**
+ * Created by HSH on 14-６-18.
+ */
+var url = require('url');
+var async = require("async");
+var config = require('../../../../../../config/config.json');
+var redisClient = require("../../../../../../lib/db/redis.js");
+var mongoose = require('../../../../../../lib/db/mongodb.js');
+var UserSchema = require('../../domain/userModel.js').UserSchema;
+var User = mongoose.model('user', UserSchema);
+var util = require("../../../../../../lib/util.js");
+
+var UserService = function() {
+    
+};
+//获取用户信息
+UserService.prototype.getUser = function(obj,callback){
+	var filter = obj;
+	if(filter.hasOwnProperty("password")){
+		filter.password = util.parsePwd(filter.password);
+	}
+	console.log(JSON.stringify(filter));
+	User.find(filter,function(err,doc){
+        return callback(err,doc);
+    })
+},
+
+//注册
+UserService.prototype.reg = function(obj,callback){
+	var _this = this;
+	_this.getUser({"username":obj.username},function(error,doc){
+		if(error){
+			return callback(error);
+		}else{
+			if(doc.length>0){
+				return callback("该用户已存在！");
+			}else{
+				if(obj.hasOwnProperty("password")){
+					obj.password = util.parsePwd(obj.password);
+				}
+				_this.save(obj,function(error,doc){
+					return callback(error,doc);
+				})
+			}
+		}
+	})
+}
+//保存用户
+UserService.prototype.save = function(obj,callback){
+	var newUser = new User(obj);
+	newUser.save(function(error,doc){
+		return callback(error,doc);
+	})
+}
+
+module.exports = UserService;

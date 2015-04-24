@@ -1,0 +1,17 @@
+{
+	"name":"smartcloud",
+	"path":"smartcloud",
+	"server":"smartcloudServer",
+	"index":"security.user",
+	"pages":[
+		{"module":"security","caption":"组织权限管理","desc":"组织权限管理","pages":[
+			{"id":"user","caption":"用户页面","desc":"用户页面","url":"/html/user.html","js":"/javascripts/smartcloud/userController.js","method":"init","components":[
+				{"component":"show","caption":"显示按钮","desc":"显示按钮","limit":false},
+				{"component":"hide","caption":"隐藏按钮","desc":"隐藏按钮","limit":true}
+			]},
+			{"id":"slide","caption":"用户滑动测试","desc":"用户滑动测试","url":"/html/slide.html","js":"javascripts/smartcloud/userController.js","method":"init","components":[
+				
+			]}
+		]}
+	]
+}

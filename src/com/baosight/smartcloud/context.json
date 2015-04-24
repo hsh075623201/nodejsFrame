@@ -1,0 +1,12 @@
+{
+    "name": "smartcloud",
+    "namespace":"smartcloud",
+    "beans":[
+        {"id": "userCmd","func": "cmd.basic.userCmd","props": [{"name": "userService","ref": "smartcloud:userService"}]},
+        {"id": "userService","func": "service.basic.userService"},
+        {"id": "roleCmd","func": "cmd.basic.roleCmd","props": [{"name": "roleService","ref": "smartcloud:roleService"}]},
+        {"id": "roleService","func": "service.basic.roleService","props": [{"name": "userService","ref": "smartcloud:userService"}]},
+         {"id": "redisCmd","func": "cmd.redis.redisCmd","props": [{"name": "redisService","ref": "smartcloud:redisService"}]},
+        {"id": "redisService","func": "service.redis.redisService"}
+    ]
+}

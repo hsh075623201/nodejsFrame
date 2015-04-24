@@ -1,0 +1,29 @@
+{
+    "name": "smartcloud",
+    "dependencies": {
+        "bearcat-dao": "*"
+    },
+    "beans": [{
+        "id": "mysqlConnectionManager",
+        "func": "node_modules.bearcat-dao.lib.connection.sql.mysqlConnectionManager",
+        "props": [{
+            "name": "port",
+            "value": "${mysql.port}"
+        }, {
+            "name": "host",
+            "value": "${mysql.host}"
+        }, {
+            "name": "user",
+            "value": "${mysql.user}"
+        }, {
+            "name": "password",
+            "value": "${mysql.password}"
+        }, {
+            "name": "database",
+            "value": "${mysql.database}"
+        }]
+    }],
+    "imports": [
+        "src/com/baosight/smartcloud/context.json"
+    ]
+}

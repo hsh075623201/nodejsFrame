@@ -1,0 +1,48 @@
+
+{
+    "cookiesecret":"smartcloud",
+    "port":"3000",
+    "dbName":"smartcloud",
+    "dbHost":"localhost",
+    "uploadDir":"/public",
+    "uploadUrl":"/upload",
+    "SysAdmin":"sysadmin",
+    "SysPassword":"password",
+    "redisPort":"6379",
+    "redisHost":"localhost",
+    "logDir":"/logs",
+    "bpaasServer" : "31.16.1.74",
+    "oauthIsValidate":false,
+
+    "filterUrl":[
+        "smartcloudServer",
+        "paasServer",
+        "analyseServer",
+        "smartcloudServer/security/users",
+        "smartcloudServer/security/permission",
+        "smartcloudServer/security/resource",
+        "coreServer",
+        "smartcloudServer/notice",
+        "/paasServer/paas/apiServicesApply/serverCount",
+        "/paasServer/paas/apiServicesVisitInfo/getAverageTimeById",
+        "/paasServer/paas/api/getServerList"
+    ],
+    "siteUrlFilter":[
+        "/oauth/getToken",
+        "/oauth/validate",
+        "/paasServer/paas/apiServicesApply/serverCount",
+        "/paasServer/paas/apiServicesVisitInfo/getAverageTimeById",
+        "/paasServer/paas/api/getServerList",
+        "/paasServer/paas/statistics/add",
+        "/analyseServer/analyse/basic/getChinaGeoInfo",
+        "/smartcloudServer"
+    ],
+    "menuUrlFilter":[
+        "smartcloud.security.oauth",
+        "paas.resource.list",
+        "paas.apiserver.server"
+    ],
+    "menu":[
+        
+    ]
+}

@@ -1,0 +1,13 @@
+
+{
+    "modules": [
+        {"module":"basic","caption":"基本信息管理","desc":"基本信息管理","commands":[
+            {"cmd": "user","id":"smartcloud:userCmd","caption":"用户管理","desc":"用户管理","methods":[
+                
+            ]},
+            {"cmd": "role","id":"smartcloud:roleCmd","caption":"角色管理","desc":"角色管理","methods":[
+                
+            ]}
+        ]}
+    ]
+}

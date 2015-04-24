@@ -1,0 +1,22 @@
+{
+    "JSON":{
+        "birthAddress":[
+            {
+                "key":"sh",
+                "value":"上海"
+            },
+            {
+                "key":"js",
+                "value":"江苏"
+            },
+            {
+                "key":"zj",
+                "value":"浙江"
+            }
+        ]
+
+    },
+    "Method":{
+        
+    }
+}
