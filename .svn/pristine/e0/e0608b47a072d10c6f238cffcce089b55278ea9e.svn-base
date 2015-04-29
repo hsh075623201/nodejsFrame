@@ -181,6 +181,8 @@ define(["util","common/component","jquery.validform","ztree"],function (util,com
 		deptDeleteUser:deptDeleteUser,
 		deptAddUserCtrl:deptAddUserCtrl,
 		deptAddUser:deptAddUser
+
+		
 	}
 	
 });

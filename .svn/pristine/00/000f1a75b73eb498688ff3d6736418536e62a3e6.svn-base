@@ -1,0 +1,25 @@
+
+{
+    "modules": [
+        {"module":"basic","caption":"基本信息管理","desc":"基本信息管理","commands":[
+            {"cmd": "user","id":"smartcloud:userCmd","caption":"用户管理","desc":"用户管理","methods":[
+                
+            ]},
+            {"cmd": "role","id":"smartcloud:roleCmd","caption":"角色管理","desc":"角色管理","methods":[
+                
+            ]},
+            {"cmd": "menu","id":"smartcloud:menuCmd","caption":"菜单管理","desc":"菜单管理","methods":[
+                
+            ]},
+            {"cmd": "dept","id":"smartcloud:deptCmd","caption":"部门管理","desc":"部门管理","methods":[
+                
+            ]}
+        ]},
+        
+        {"module":"cache","caption":"缓存管理","desc":"缓存管理","commands":[
+            {"cmd": "redis","id":"smartcloud:redisCmd","caption":"redis管理","desc":"redis管理","methods":[
+                
+            ]}
+        ]}
+    ]
+}
