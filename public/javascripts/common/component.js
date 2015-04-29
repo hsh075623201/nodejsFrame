@@ -73,17 +73,28 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
 	    },1500);
 	}
 	//表格checkbox
-    var getTableCheckbox = function(id){
-        return '<label><input class="ace" type="checkbox" name="selectedCheckbox" value="'+id+'" /><span class="lbl"></span></label>';
+    var getTableCheckbox = function(id,name){
+        return '<label><input class="ace" type="checkbox" name="'+name+'" value="'+id+'" /><span class="lbl"></span></label>';
 
     };
+    //获取checkbox值
+    var getTableCheckedbox = function(pos){
+	    var values = [];
+	    var $input = $(pos).find("input[type='checkbox']");
+	    $.each($input,function(index,input){
+	        if(input.checked == true){
+	            values.push(input.value);
+	        }
+	    });
+	    return values;
+	};
     //表格radio
-    var getTableRadio = function(id){
-        return '<label><input class="ace" type="radio" name="selectedRadio" value="'+id+'" /><span class="lbl"></span></label>';
+    var getTableRadio = function(id,name){
+        return '<label><input class="ace" type="radio" name="'+name+'" value="'+id+'" /><span class="lbl"></span></label>';
     };
     //获取表格radio 值
     var getTableRadioVal = function(pos){
-    	return $(pos).find("input[name='selectedRadio'].ace:checked").val();
+    	return $(pos).find("input[type='radio'].ace:checked").val();
     };
     //填充表单
     var renderForm = function(pos,obj){
@@ -127,6 +138,8 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
             "bFilter": false,
             "oLanguage": {
                 "sProcessing": "正在加载中......",
+                "sInfoEmpty": "没有记录...",
+                "sEmptyTable": "查询记录为空...",
                 "sInfo": "当前显示 _START_ 到 _END_ 条，共 _TOTAL_ 条记录"
              },
              //"sAjaxSource":config.sAjaxSource,//后台访问地址
@@ -181,6 +194,53 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
         });
         return serializeObj;
     }
+    //菜单迭代处理
+    var menuIterator = function(config,menus){
+    	for(var i=0,len=config.length;i<len;i++){
+    		var obj = {
+    			"name":config[i].name,
+    			"hash":config[i].hash,
+    			"pic":config[i].pic,
+    			"desc":config[i].desc,
+    			"code":config[i].code,
+    			"pCode":config[i].pCode
+    		};
+    		menus.push(obj);
+    		var flag = config[i].children&&config[i].children.length>0;
+	        if(flag){
+	            menuIterator(config[i].children,menus);
+	        }
+	    }
+	    return menus;
+
+    }
+
+     //获取菜单信息
+     //flag:是否需要平铺数组类型返回 true为不需要
+     //app 表示获取的应用的菜单 null为全部获取
+    var getMenus = function(app,flag,callback){
+        $.getJSON("/config/menu.json", function(config){
+        	var menus = [];
+            for(var i=0,len=config.length;i<len;i++){
+            	if(!app){//全部获取
+            		if(flag){
+            			return callback(config[i]);
+            		}else{
+            			menus = menuIterator([config[i]],menus);
+            		}
+            	}else if(config[i].app == app){//获取对应的一个
+            		if(flag){
+            			return callback(config[i]);
+            		}else{
+            			menus = menuIterator([config[i]],[]);
+            			break;
+            		}
+            		
+            	}
+            }
+            return callback(menus);
+        })
+    }
 
     return {
         alert:alert,
@@ -188,10 +248,12 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
         prompt:prompt,
         message:message,
         getTableCheckbox:getTableCheckbox,
+        getTableCheckedbox:getTableCheckedbox,
         getTableRadio:getTableRadio,
         getTableRadioVal:getTableRadioVal,
         renderForm:renderForm,
         renderDataTable:renderDataTable,
-        toJsonObject:toJsonObject
+        toJsonObject:toJsonObject,
+        getMenus:getMenus
     }
 });

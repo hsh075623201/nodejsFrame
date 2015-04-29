@@ -1,0 +1,123 @@
+/**
+ * Created by HSH on 14-６-18.
+ */
+var crypto = require('crypto');
+var mongoose = require('../../../../../../lib/db/mongodb.js');
+var UserSchema = require('../../domain/userModel.js').UserSchema;
+var User = mongoose.model('user', UserSchema);
+
+var UserService = function() {
+};
+
+//是否是管理员 TODO
+UserService.prototype.isAdmin = function(username,callback){
+	if(username=="admin"){
+		return callback(null,true);
+	}else{
+		return callback(null,false);
+	}
+}
+//加密
+UserService.prototype.parsePwd = function(pwd){
+	return crypto.createHash('md5').update(pwd).digest('base64');
+}
+//获取用户信息
+UserService.prototype.getUser = function(obj,callback){
+	var filter = obj;
+	if(filter.hasOwnProperty("password")){
+		filter.password = this.parsePwd(filter.password);
+	}
+	User.find(filter,callback);
+};
+
+//新增
+UserService.prototype.add = function(obj,callback){
+	var _this = this;
+	_this.getUser({"username":obj.username},function(error,doc){
+		if(error){
+			return callback(error);
+		}else{
+			if(doc.length>0){
+				return callback("该用户已存在！");
+			}else{
+				if(obj.hasOwnProperty("password")){
+					obj.password = _this.parsePwd(obj.password);
+				}
+				_this.save(obj,callback);
+			}
+		}
+	})
+};
+//保存用户
+UserService.prototype.save = function(obj,callback){
+	var newUser = new User(obj);
+	newUser.save(callback);
+};
+//分页
+UserService.prototype.pagination = function(obj,query,callback){
+	
+	User.count(query).exec(function(err,count){
+        if (err){
+            return callback(err,null);
+        }else{
+            User.find(query).skip(obj.iDisplayStart)
+                .limit(obj.iDisplayLength)
+                .sort(obj.sort)
+                .exec(function(error, data) {
+                    var result = {};
+                    result.sEcho=obj.sEcho;
+                    result.iTotalRecords=count;
+                    result.iTotalDisplayRecords=count;
+                    result.iDisplayStart = obj.iDisplayStart;
+                    result.aaData = data;
+                    return callback(error,result);
+                });
+        }
+    });
+};
+//删除用户
+UserService.prototype.delete = function(obj,callback){
+	User.remove(obj,callback);
+}
+//获取用户的角色或部门等信息
+UserService.prototype.getAllocationInfo = function(obj,params,allocation,callback){
+	var query = "";
+	if(allocation == "roleArr"){
+		query = {"roleArr":params._id};
+	}
+	this.pagination(obj,query,callback);
+}
+//获取需要添加用户信息
+UserService.prototype.getNeedUser = function(obj,params,allocation,callback){
+	var query = "";
+	if(allocation == "roleArr"){
+		query = {"roleArr":{$ne:params._id}};
+	}
+	this.pagination(obj,query,callback);
+};
+//为角色 部门 添加新用户
+UserService.prototype.addUser = function(obj,allocation,callback){
+	var query = {"username":{$in:obj.username}};
+	var add = "";
+	if(allocation =="roleArr"){
+		add = {"roleArr":obj._id};
+	}
+
+	User.update(query,{$addToSet:add}, {multi : true },callback);
+}
+//为角色 部门删除已分配的用户
+UserService.prototype.deleteUser = function(obj,allocation,callback){
+	var query = "";
+	if(obj.username){
+		query = {"username":obj.username};
+	}else{
+		query = {};
+	}
+	var del = "";
+	if(allocation == "roleArr"){
+		del = {"roleArr":obj._id};
+	}
+	User.update(query,{$pull:del},{multi:true},callback);
+}
+
+module.exports = UserService;

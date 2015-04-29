@@ -1,0 +1,10 @@
+define(["util","common/component","ztree"],function (util,component) {
+	var init = function(){
+		
+		
+	}
+
+	return {
+		init：init
+	}
+})

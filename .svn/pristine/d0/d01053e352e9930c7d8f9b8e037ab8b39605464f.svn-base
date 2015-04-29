@@ -1,0 +1,102 @@
+
+var UserCmd = function() {
+    this.userService = null;
+};
+
+//是否是管理员
+UserCmd.prototype.isAdmin = function(req,res,callback){
+    var username = req.session.user.username;
+    this.userService.isAdmin(username,function(error,result){
+        if(callback&&(typeof callback == 'function')){
+            return callback(error,result);
+        }
+        return res.json(error,result);
+    })
+}
+
+//登录
+UserCmd.prototype.login = function(req,res){
+    var obj = {
+        "username": req.body.username,
+        "password": req.body.password
+    }
+    this.userService.getUser(obj,function(error,result){
+        if(result&&result.length>0){
+             req.session.user = result[0];
+            //todo 加载用户的redis缓存  还没做  
+            return res.redirect("/"); 
+        }else{
+            return res.redirect("/login");
+        }
+    })
+};
+//注册
+UserCmd.prototype.reg = function(req,res){
+    var obj = {
+        "username":req.body.username,
+        "password":req.body.password,
+        "email":req.body.email
+    }
+    this.userService.add(obj,function(error,result){
+        if(error){
+            return res.json(error);
+        }else{
+             req.session.user = result;
+            //todo 加载用户的redis缓存  还没做  
+            return res.redirect("/");
+        }
+    })
+};
+//新增
+UserCmd.prototype.add = function(req,res){
+    var obj = JSON.parse(req.body.params);
+    this.userService.add(obj,function(error,result){
+        return res.json(error,result);
+    })
+};
+//分页显示
+UserCmd.prototype.pagination = function(req,res){
+
+    var sEcho = req.param("sEcho");
+    var iDisplayStart = req.param("iDisplayStart");
+    var iDisplayLength = req.param("iDisplayLength");
+    var iSortCol_0 = req.param("iSortCol_0");
+    var mSortDataProp = req.param("mDataProp_"+iSortCol_0);
+    var sortType = req.param("sSortDir_0");
+    var sortFlag = "-";
+    if(sortType == "asc"){
+        sortFlag = "-";
+    }else if(sortType == "desc"){
+        sortFlag = "";
+    }
+    var params = req.param("params");
+    var query={};
+    if(params){
+        var jsonObj = JSON.parse(params);
+        for(var attr in jsonObj){
+            query[attr]=new RegExp(jsonObj[attr]);//模糊查询参数
+        }
+    }
+    var obj = {
+        "iDisplayStart":iDisplayStart,
+        "iDisplayLength":iDisplayLength,
+        "sort":sortFlag+mSortDataProp,
+        "sEcho":sEcho
+    };
+
+    this.userService.pagination(obj,query,function(error,result){
+        return res.json(error,result);
+    })
+};
+//更新
+UserCmd.prototype.update = function(req,res){
+
+}
+//删除
+UserCmd.prototype.delete = function(req,res){
+    var obj = JSON.parse(req.body.params);
+    this.userService.delete(obj,function(error,result){
+        return res.json(error,result);
+    })
+}
+module.exports = UserCmd;

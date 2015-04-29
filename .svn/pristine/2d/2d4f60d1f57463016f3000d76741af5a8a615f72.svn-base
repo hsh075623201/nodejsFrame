@@ -1,0 +1,5 @@
+
+var DeptService = function() {
+};
+
+module.exports = DeptService;

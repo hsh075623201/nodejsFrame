@@ -1,0 +1,115 @@
+var mongoose = require('../../../../../../lib/db/mongodb.js');
+var RoleSchema = require('../../domain/roleModel.js').RoleSchema;
+var Role = mongoose.model('role', RoleSchema);
+
+
+
+var RoleService = function() {
+	this.userService = null;
+};
+
+//验证是否已存在编码或名称
+RoleService.prototype.validate = function(filter,callback){
+	Role.find(filter,callback);
+}
+//新增角色
+RoleService.prototype.add = function(obj,callback){
+	var _this = this;
+	var filter = {$or:[{"name":obj.name},{"code":obj.code}]};
+	this.validate(filter,function(error,doc){
+		if(error){
+			return callback(error);
+		}else{
+			if(doc.length>0){
+				return callback("该角色名称或编码已存在！");
+			}else{
+				_this.save(obj,callback);
+			}
+		}
+	});
+};
+//保存
+RoleService.prototype.save = function(obj,callback){
+	var newRole = new Role(obj);
+	newRole.save(callback);
+};
+//分页
+RoleService.prototype.pagination = function(obj,query,callback){
+	
+	Role.count(query).exec(function(err,count){
+        if (err){
+            return callback(err,null);
+        }else{
+            Role.find(query).skip(obj.iDisplayStart)
+                .limit(obj.iDisplayLength)
+                .sort(obj.sort)
+                .exec(function(error, data) {
+                    var result = {};
+                    result.sEcho=obj.sEcho;
+                    result.iTotalRecords=count;
+                    result.iTotalDisplayRecords=count;
+                    result.iDisplayStart = obj.iDisplayStart;
+                    result.aaData = data;
+                    return callback(error,result);
+                });
+        }
+    });
+};
+//获取角色信息
+RoleService.prototype.getRole = function(obj,callback){
+	Role.find(obj,callback)
+}
+//更新角色
+RoleService.prototype.update = function(obj,callback){
+	Role.update({"code":obj.code},{$set:obj},callback);
+}
+//删除 TODO用户中的角色信息
+RoleService.prototype.delete = function(obj,callback){
+	Role.remove(obj,function(err,doc){
+		//TODO
+        return callback(err,doc);
+    })
+}
+//获取已添加用户
+RoleService.prototype.getAddedUser = function(obj,query,callback){
+	var _this = this;
+	Role.findOne(query,function(err,doc){
+		if(err){
+			return callback(err);
+		}
+		_this.userService.getAllocationInfo(obj,doc.id,"roleArr",callback);
+	})
+}
+//获取需添加的用户
+RoleService.prototype.getNeedUser = function(obj,query,callback){
+	var _this = this;
+	Role.findOne(query,function(err,doc){
+		if(err){
+			return callback(err);
+		}
+		_this.userService.getNeedUser(obj,doc.id,"roleArr",callback);
+	})
+}
+//添加用户
+RoleService.prototype.addUser = function(obj,callback){
+	var _this = this;
+	Role.findOne({"code":obj.code},function(err,doc){
+		if(err){
+			return callback(err);
+		}
+
+		_this.userService.addUser(obj.username,doc.id,"roleArr",callback);
+	})
+}
+//删除用户
+RoleService.prototype.deleteUser = function(obj,callback){
+	var _this = this;
+	Role.findOne({"code":obj.code},function(err,doc){
+		if(err){
+			return callback(err);
+		}
+
+		_this.userService.deleteUser(obj.username,doc.id,"roleArr",callback);
+	})
+}
+module.exports = RoleService;

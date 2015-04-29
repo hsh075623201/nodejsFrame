@@ -1,0 +1,88 @@
+requirejs.config({
+    baseUrl: 'javascripts',
+    paths: {
+        "jquery":'import/jquery-1.8.3',
+        "jquery.validform":'import/jquery.validform',
+        "bootstrap":'import/bootstrap.min',
+        "hashchange":'import/jquery.ba-hashchange',
+        "ace":'import/ace.min',
+        "pageslide":'import/jquery.pageslide.min',
+        "util":'common/util',
+        "datatables":'import/jquery.dataTables.min',
+        "datatables.bootstrap":'import/jquery.datatables.bootstrap',
+        "ztree":'import/jquery.ztree.all-3.5.min'
+    },
+    shim: {
+        'hashchange': { 
+            deps: ['jquery'],
+            exports: 'hashchange'
+        },
+        'ace':{
+           deps: ['jquery'],
+            exports: 'ace'
+        },
+        "jquery.validform":{
+            deps:['jquery']
+        },
+        "bootstrap":{
+            deps:['jquery']
+        },
+        "pageslide":{
+            deps:['jquery']
+        },
+        "datatables":{
+            deps:['jquery']
+        },
+        "datatables.bootstrap":{
+            deps:["datatables"]
+        },
+        "ztree":{
+            deps:["jquery"]
+        }
+    }
+});
+
+// Start the main app logic.
+requirejs(['jquery','util','common/component','hashchange','bootstrap','ace'],function   ($,util,component) {
+
+    component.getMenus("smartcloudServer",true,function(config){
+        //菜单权限控制TODO
+
+        //获取菜单信息
+        var str = "",menus=config.children;
+        
+        for(var i=0,len=menus.length;i<len;i++){
+            str += "<li>";
+            if(menus[i].isParent){
+                str +="<a href='javascript:;' class='dropdown-toggle'>"+
+                "<i class='"+menus[i].pic+"'></i>"+
+                "<span class='menu-text'>"+menus[i].name+"</span>"+
+                "<b class='arrow icon-angle-down'></b>"+
+                "</a>"+
+                "<ul class='submenu' style='display: none;'>";
+                for(var j=0,subLen=menus[i].children.length;j<subLen;j++){
+                    str +="<li>"+
+                    "<a href='#"+menus[i].children[j].url+"'>"+
+                    "<i class='icon-double-angle-right'></i>"+menus[i].children[j].name+"</a></li>";
+                }
+                str += "</ul>";
+            }else{
+                str += "<a href='javascript:;' class='dropdown-toggle'>"+
+                "<i class='icon-double-angle-right></i>"+menus[i].name+"</a>";
+            }
+            str +="</li>";
+        }
+        $("#menus").empty().append(str);
+
+        $(window).hashchange( function(){
+            var hashStr = "";//页面定位
+            hashStr = location.hash.replace("#","");
+            util.parsePage(hashStr,"smartcloud/config/app.json");
+        
+        });
+        $(window).hashchange();//触发事件
+    })
+    
+    
+
+});

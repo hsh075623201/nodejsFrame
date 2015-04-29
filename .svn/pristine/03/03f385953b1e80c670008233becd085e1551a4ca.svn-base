@@ -1,0 +1,74 @@
+define(["util","common/component","jquery.validform","ztree"],function (util,component) {
+
+	var url = "smartcloud/config/app.json";
+	//页面初始化 列表显示
+	var init = function(params){
+        var setting = {
+            data: {
+                simpleData: {
+                    enable: true,
+                    idKey: "code",
+                    pIdKey: "pCode",
+                    rootPId: "dept_root"
+                },
+                key:{
+                    name:"name"
+                }
+            },
+            check: {
+                enable: true,
+                chkStyle: "radio",
+                radioType: "all"
+            },
+            view: {
+                selectedMulti: false
+            }/*,
+            callback: {
+                onCheck: 
+            }*/
+        };
+        $.fn.zTree.init($("#deptTree"),setting,[]);
+	};
+	//新增角色页面显示
+	var addDept = function(){
+
+		var zTree = $.fn.zTree.getZTreeObj("deptTree");
+	    var nodes = zTree.getSelectedNodes();
+	    if(nodes.length ==0){
+	        component.confirm("您将创建的是根目录，请确认！",function(){
+	            util.slidePage("dept.add",url);
+	        });
+	    }else{
+	        util.slidePage("dept.add",url);
+	    }
+		
+	};
+	//新增角色操作
+	var addDeptCtrl = function(){
+		var $form = $("#addDeptForm");
+		$form.Validform({
+		 	tiptype:3,
+        	label:".label",
+        	showAllError:true,
+        	callback:function(form){
+        		var jsonForm = component.toJsonObject($form);
+        		util.post("/smartcloudServer/basic/dept/add",jsonForm,function(ret){
+        			component.message("保存成功","success");
+        		})
+        		util.slideHide();
+        		return false;
+        	}
+		});
+	};
+	
+	
+
+	return {
+		init:init,
+		addDept:addDept,
+		addDeptCtrl:addDeptCtrl
+
+		
+	}
+	
+});

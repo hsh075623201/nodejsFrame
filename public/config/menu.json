@@ -1,0 +1,23 @@
+[
+	
+	{"name":"智慧云平台","app":"smartcloudServer","hash":"","pic":"","desc":"智慧云平台","code":"menu_smartcloud_root","pCode":"menu_root","sortNum":1,"isParent":"true","children":[
+        {"name":"用户与权限管理","hash":"","pic":"icon-desktop","desc":"用户与权限管理","code":"menu_smartcloud_org","pCode":"menu_smartcloud_root","sortNum":2,"isParent":"true","children":[
+            {"name":"用户列表","hash":"user.list","pic":"fa-globe","desc":"用户列表","code":"menu_smartcloud_user","pCode":"menu_smartcloud_org","sortNum":2.1,"isParent":"false"},
+            {"name":"角色列表","hash":"role.list","pic":"fa-globe","desc":"角色列表","code":"menu_smartcloud_role","pCode":"menu_smartcloud_org","sortNum":2.2,"isParent":"false"},
+            {"name":"部门列表","hash":"dept.list","pic":"fa-globe","desc":"部门列表","code":"menu_smartcloud_dept","pCode":"menu_smartcloud_org","sortNum":2.3,"isParent":"false"},
+            {"name":"资源列表","hash":"resource.list","pic":"fa-globe","desc":"资源树","code":"menu_smartcloud_resource","pCode":"menu_smartcloud_org","sortNum":2.4,"isParent":"false"},
+            {"name":"授权管理","hash":"auth.manage","pic":"fa-globe","desc":"授权管理","code":"menu_smartcloud_authorize","pCode":"menu_smartcloud_org","sortNum":2.5,"isParent":"false"}
+
+        ]},
+        {"name":"菜单管理","hash":"","pic":"icon-desktop","desc":"菜单管理","code":"menu_smartcloud_menuManage","pCode":"menu_smartcloud_root","sortNum":3,"isParent":"true","children":[
+            {"name":"菜单列表","hash":"menu.list","pic":"fa-globe","desc":"菜单列表","code":"menu_smartcloud_menu","pCode":"menu_smartcloud_menuManage","sortNum":3.1,"isParent":"false"}
+        ]},
+        {"name":"消息管理","hash":"","pic":"icon-desktop","desc":"消息管理","code":"menu_smartcloud_noticeManage","pCode":"menu_smartcloud_root","sortNum":4,"isParent":"true","children":[
+            {"name":"任务列表","hash":"task.list","pic":"fa-globe","desc":"任务列表","code":"menu_smartcloud_task","pCode":"menu_smartcloud_noticeManage","sortNum":4.1,"isParent":"false"},
+            {"name":"通知列表","hash":"notice.list","pic":"fa-globe","desc":"通知列表","code":"menu_smartcloud_notice","pCode":"menu_smartcloud_noticeManage","sortNum":4.2,"isParent":"false"},
+            {"name":"通知类型","hash":"noticetype.list","pic":"fa-globe","desc":"通知类型","code":"menu_smartcloud_noticeType","pCode":"menu_smartcloud_noticeManage","sortNum":4.3,"isParent":"false"}
+
+        ]}
+    ]}
+	
+]
