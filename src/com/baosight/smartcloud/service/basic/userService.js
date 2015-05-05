@@ -1,5 +1,5 @@
 /**
- * Created by HSH on 14-６-18.
+ * 用户信息处理文件
  */
 var crypto = require('crypto');
 var mongoose = require('../../../../../../lib/db/mongodb.js');
@@ -131,5 +131,18 @@ UserService.prototype.deleteUser = function(obj,allocation,callback){
 	}
 	User.update(query,{$pull:del},{multi:true},callback);
 }
-
+//新增资源
+UserService.prototype.addResource = function(query,obj,callback){
+	//全部删除数据
+	User.update(query,{$unset:{"menus":1,"components":1,"urls":1}},function(error,doc){
+		if(error){
+			return callback(error);
+		}
+		//新增
+		User.update(query,{$addToSet:{"menus":{$each:obj.menu},"components":{$each:obj.component},"urls":{$each:obj.url}}},function(error,doc){
+			return callback(error,doc);
+		})
+	})
+	
+}
 module.exports = UserService;

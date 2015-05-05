@@ -1,3 +1,6 @@
+/**
+* 缓存操作文件
+*/
 var RedisCmd = function(){
 	this.redisService = null;
 };

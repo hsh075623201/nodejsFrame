@@ -1,0 +1,53 @@
+/**
+* 资源信息处理文件
+*/
+var server = require("../../../../../../config/server.json")
+var ResourceService = function() {
+};
+//获取URL资源
+ResourceService.prototype.getResource = function(obj,callback){
+	var servers = server.apps;
+	var ret = [];
+	for(var i=0,len=servers.length;i<len;i++){
+		var obj = {
+			"name":servers[i].name,
+			"code":"url_"+servers[i].code,
+			"pCode":"url_root"
+		}
+		ret.push(obj);
+		var app = require("../../../../../../src/"+servers[i].path+"/command.json");
+		var modules = app.modules;
+		for(var j=0,moduleLen=modules.length;j<moduleLen;j++){
+			var moduleObj = {
+				"name":modules[j].caption,
+				"code":obj.code+modules[j].module,
+				"pCode":obj.code
+			}
+			ret.push(moduleObj);
+			var cmds = modules[j].commands;
+			for(var k=0,cmdLen=cmds.length;k<cmdLen;k++){
+				var cmdObj = {
+					"name":cmds[k].caption,
+					"code":moduleObj.code+cmds[k].cmd,
+					"pCode":moduleObj.code
+				}
+				ret.push(cmdObj);
+				var methods = cmds[k].methods;
+				for(var l=0,methodLen=methods.length;l<methodLen;l++){
+					var methodObj = {
+						"name":methods[l].caption,
+						"code":cmdObj.code+methods[l].method,
+						"pCode":cmdObj.code
+					}
+					ret.push(methodObj);
+				}
+			}
+		}
+
+	}
+
+	return callback(null,ret);
+
+}
+
+module.exports = ResourceService;

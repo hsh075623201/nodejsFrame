@@ -1,0 +1,18 @@
+<div ng-page>
+<div class="page-header" id="page-header">
+    <h1>
+        授权
+        <small>
+            <i class="fa fa-angle-double-right"></i>
+            授权信息
+        </small>
+    </h1>
+</div><!-- /.page-header -->
+
+<div class="row">
+    <div class="col-xs-12">
+        
+ 
+    </div>
+</div>
+</div>

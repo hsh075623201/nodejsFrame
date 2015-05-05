@@ -1,3 +1,7 @@
+/*
+* 主文件
+* 加载引用的文件
+*/
 requirejs.config({
     baseUrl: 'javascripts',
     paths: {
@@ -18,7 +22,7 @@ requirejs.config({
             exports: 'hashchange'
         },
         'ace':{
-           deps: ['jquery'],
+            deps: ['jquery'],
             exports: 'ace'
         },
         "jquery.validform":{
@@ -53,7 +57,7 @@ requirejs(['jquery','util','common/component','hashchange','bootstrap','ace'],fu
         
         for(var i=0,len=menus.length;i<len;i++){
             str += "<li>";
-            if(menus[i].isParent){
+            if(menus[i].children&&menus[i].children.length>0){
                 str +="<a href='javascript:;' class='dropdown-toggle'>"+
                 "<i class='"+menus[i].pic+"'></i>"+
                 "<span class='menu-text'>"+menus[i].name+"</span>"+

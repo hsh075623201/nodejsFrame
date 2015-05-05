@@ -1,7 +1,14 @@
-
+/**
+* 动态加载页面的处理文件
+*/
 define(["common/component","pageslide"],function (component) {
    
-	//获取匹配的配置信息
+    /**  
+    * @description 获取匹配的配置信息
+    * @param hashStr 页面定位字符串
+    * @param url 获取配置信息的地址
+    * @param callback 回调函数
+    */ 
 	var getConfig = function(hashStr,url,callback){
         //TODO　hashStr 权限检查
 		$.getJSON(url,function(config){
@@ -9,14 +16,14 @@ define(["common/component","pageslide"],function (component) {
             var hashPathArr = hashStr.split(".");
 			var retObj = {"appPath":config.path};
 			var flag = true ;
-            for(var i=0,len=config.pages.length;i<len;i++){
-                if(hashPathArr[0] == config.pages[i].module){
-                    retObj.jsPath = config.pages[i].js;
-                    for(var j=0,subLen=config.pages[i].pages.length;j<subLen;j++){
-                        if(hashPathArr[1] == config.pages[i].pages[j].id){
-                            retObj.htmlPath = config.pages[i].pages[j].url;
-                            retObj.initMethod = config.pages[i].pages[j].method;
-                            retObj.components = config.pages[i].pages[j].components;
+            for(var i=0,len=config.modules.length;i<len;i++){
+                if(hashPathArr[0] == config.modules[i].module){
+                    retObj.jsPath = config.modules[i].js;
+                    for(var j=0,subLen=config.modules[i].pages.length;j<subLen;j++){
+                        if(hashPathArr[1] == config.modules[i].pages[j].id){
+                            retObj.htmlPath = config.modules[i].pages[j].url;
+                            retObj.initMethod = config.modules[i].pages[j].method;
+                            retObj.components = config.modules[i].pages[j].components;
                             flag = false;
                         }
                     }
@@ -29,7 +36,11 @@ define(["common/component","pageslide"],function (component) {
             return callback(retObj);
 		})
 	};
-	//页面控制
+	/**  
+    * @description 对动态加载的页面进行操作
+    * @param hashStr 页面定位字符串
+    * @param config 配置信息
+    */ 
 	var pageController = function(hashStr,config){
 		//给页面赋予属性
 		$("div[ng-page]").each(function(){
@@ -39,7 +50,7 @@ define(["common/component","pageslide"],function (component) {
 	    });
 		//加载对应的JS
         require([config.jsPath],function(objCtrl){
-            console.log(config.jsPath+"..."+objCtrl);
+            
             if(config.initMethod){
                 objCtrl[config.initMethod]();//页面初始化方法
             }
@@ -84,7 +95,12 @@ define(["common/component","pageslide"],function (component) {
            
         })
 	};
-	//页面解析
+	/**  
+    * @description 页面解析
+    * @param hashStr 页面定位字符串
+    * @param url 获取配置信息地址
+    * @param pos jquery 定位符 动态页面显示的位置
+    */ 
 	var parsePage = function(hashStr,url,pos){
 		getConfig(hashStr,url,function(config){
 			//加载页面
@@ -96,8 +112,11 @@ define(["common/component","pageslide"],function (component) {
 		})
 	};
 
-
-	//返回结果统一处理
+    /**  
+    * @description 返回结果统一处理
+    * @param data 返回结果
+    * @param callback 回调函数
+    */ 
 	var resProcess = function(data,callback){
 		var _this = this;
 	    if(data.status==-1){
@@ -107,14 +126,24 @@ define(["common/component","pageslide"],function (component) {
 	        return callback(data.doc);
 	    }
 	};
-    //get 请求
+    /**  
+    * @description 封装get请求
+    * @param path 请求路径
+    * @param params 请求条件
+    * @param callback 回调函数
+    */ 
     var get = function(path,params,callback){
     	params.random = Math.random();
     	$.get(path, params,function(data){
             return resProcess(data,callback);
         });
     };
-    //post 请求
+    /**  
+    * @description 封装post请求
+    * @param path 请求路径
+    * @param params 请求条件
+    * @param callback 回调函数
+    */ 
     var post = function(path,params,callback){
     	var params = JSON.stringify(params);
         console.log(params);
@@ -122,7 +151,12 @@ define(["common/component","pageslide"],function (component) {
 	        return resProcess(data,callback);
 	    });
     };
-    //侧滑页面显示
+    /**  
+    * @description 侧滑页面显示
+    * @param hashStr 页面定位符
+    * @param url 配置信息路径
+    * @param callback 回调函数
+    */ 
     var slidePage = function(hashStr,url,callback){
     	getConfig(hashStr,url,function(config){
 			//加载页面
@@ -133,7 +167,9 @@ define(["common/component","pageslide"],function (component) {
 		})
     };
 
-    //隐藏侧滑页面
+    /**  
+    * @description 关闭侧滑页面
+    */ 
     var slideHide = function(){
     	$.pageslide.close();
     };

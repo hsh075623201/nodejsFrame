@@ -1,3 +1,6 @@
+/**
+* 处理菜单信息文件
+*/
 define(["util","common/component","ztree"],function (util,component) {
 	var init = function(){
 

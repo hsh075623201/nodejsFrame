@@ -1,4 +1,6 @@
-
+/**
+* 用户操作文件
+*/
 var UserCmd = function() {
     this.userService = null;
 };
@@ -108,6 +110,17 @@ UserCmd.prototype.update = function(req,res){
 UserCmd.prototype.delete = function(req,res){
     var obj = JSON.parse(req.body.params);
     this.userService.delete(obj,function(error,result){
+        return res.json(error,result);
+    })
+}
+//新增资源
+UserCmd.prototype.addResource = function(req,res){
+    var obj = JSON.parse(req.body.params);
+    var query = {
+        "username":obj.username
+    }
+    var resource = obj.resource;
+    this.userService.addResource(query,resource,function(error,result){
         return res.json(error,result);
     })
 }

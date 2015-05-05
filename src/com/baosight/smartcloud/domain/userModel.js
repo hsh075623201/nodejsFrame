@@ -1,4 +1,7 @@
 
+/**
+* 用户模型
+*/
 var mongoose = require('mongoose');
 
 exports.UserSchema = new mongoose.Schema({
@@ -20,5 +23,8 @@ exports.UserSchema = new mongoose.Schema({
     hidden:Boolean,
     roleArr:[{ type: mongoose.Schema.Types.ObjectId, ref: 'role' }],
     deptArr:[{ type: mongoose.Schema.Types.ObjectId, ref: 'dept' }],
+    menus:[],
+    urls:[],
+    components:[]
 });
 

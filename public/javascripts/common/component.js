@@ -1,5 +1,12 @@
+/**
+* 封装公共前端组件
+*/
 define(["import/bootbox.min","datatables","datatables.bootstrap"],function (bootbox) {
-
+	/**  
+	* @description 重写alert
+	* @param message 弹出消息
+	* @param width 宽度
+	*/ 
 	var alert = function(message,width){
 			var dialog = bootbox.dialog({
 	        message: message,
@@ -17,6 +24,12 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
 	        $(".modal-dialog").width(width);
 	    }
 	};
+	/**  
+	* @description 重写confirm
+	* @param message 消息
+	* @param callback 回调函数
+	* @param width 宽度
+	*/ 
 	var confirm = function (message,callback,width){
 	    bootbox.dialog({
 	        message: message,
@@ -43,6 +56,11 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
 	        $(".modal-dialog").width(width);
 	    }
 	};
+	/**  
+	* @description 重写prompt
+	* @param title 标题
+	* @param callback 回调函数
+	*/ 
 	var prompt = function(title,callback){
 	    var promptOptions = {
 	        title: title,
@@ -64,7 +82,11 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
 	    };
 	    bootbox.prompt(promptOptions);
 	};
-	//message
+	/**  
+	* @description 消息提示 一闪而过
+	* @param msg 消息内容
+	* @param type 提示消息的类型
+	*/ 
 	var message = function(msg,type){
 		 var messageAlert = $('<div class="alert alert-'+type+' text-center"><button type="button" class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>'+msg+'<br /></div>');
 	    $("body").prepend(messageAlert);
@@ -72,12 +94,21 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
 	        messageAlert.hide(1000,"swing");
 	    },1500);
 	}
-	//表格checkbox
+	/**  
+	* @description checkbox标签
+	* @param id checkbox值
+	* @param name checkbox名字
+	* @return checkbox标签
+	*/ 
     var getTableCheckbox = function(id,name){
         return '<label><input class="ace" type="checkbox" name="'+name+'" value="'+id+'" /><span class="lbl"></span></label>';
 
     };
-    //获取checkbox值
+    /**  
+	* @description 获取checkbox值
+	* @param pos jquery定位符
+	* @return checkbox选中的值
+	*/ 
     var getTableCheckedbox = function(pos){
 	    var values = [];
 	    var $input = $(pos).find("input[type='checkbox']");
@@ -88,15 +119,28 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
 	    });
 	    return values;
 	};
-    //表格radio
+    /**  
+	* @description radio标签
+	* @param id radio
+	* @param name radio
+	* @return radio标签
+	*/ 
     var getTableRadio = function(id,name){
         return '<label><input class="ace" type="radio" name="'+name+'" value="'+id+'" /><span class="lbl"></span></label>';
     };
-    //获取表格radio 值
+    /**  
+	* @description 获取radio值
+	* @param pos jquery定位符
+	* @return radio选中的值
+	*/ 
     var getTableRadioVal = function(pos){
     	return $(pos).find("input[type='radio'].ace:checked").val();
     };
-    //填充表单
+    /**  
+	* @description 填充表单
+	* @param pos jquery定位符
+	* @param obj 填充的对象值
+	*/
     var renderForm = function(pos,obj){
     	var key,value,tagName,type,arr;
 	    for(x in obj){
@@ -127,7 +171,11 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
 	        });
 	    }
     }
-    //jquery DataTable
+    /**  
+	* @description jqueryDataTable
+	* @param pos jquery定位符
+	* @param config table配置
+	*/
     var renderDataTable = function(pos,config){
         var defaultConfig = {
             "ordering":false,//是否排序
@@ -175,7 +223,11 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
 
         $(pos).dataTable(defaultConfig);
     };
-
+    /**  
+	* @description $obj对象封装成json形式
+	* @param $obj $obj对象
+	* @return json结果
+	*/
     var toJsonObject = function($obj){
         var serializeObj={};
         var array=$obj.serializeArray();
@@ -194,30 +246,43 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
         });
         return serializeObj;
     }
-    //菜单迭代处理
-    var menuIterator = function(config,menus){
+    /**  
+	* @description 迭代处理菜单信息
+	* @param code 初始化编码
+	* @param pCode 父及菜单编码
+	* @param config 菜单配置信息
+	* @param menus 存放处理完成菜单的变量
+	* @return 处理后的菜单结果
+	*/
+    var menuIterator = function(code,pCode,config,menus){
     	for(var i=0,len=config.length;i<len;i++){
+    		
     		var obj = {
     			"name":config[i].name,
     			"hash":config[i].hash,
     			"pic":config[i].pic,
     			"desc":config[i].desc,
-    			"code":config[i].code,
-    			"pCode":config[i].pCode
+    			"code":code+config[i].hash,
+    			"pCode":pCode
     		};
     		menus.push(obj);
+
     		var flag = config[i].children&&config[i].children.length>0;
 	        if(flag){
-	            menuIterator(config[i].children,menus);
+	            menuIterator(code,obj.code,config[i].children,menus);
 	        }
 	    }
+
 	    return menus;
 
     }
 
-     //获取菜单信息
-     //flag:是否需要平铺数组类型返回 true为不需要
-     //app 表示获取的应用的菜单 null为全部获取
+    /**  
+	* @description 获取菜单信息
+	* @param app 那个应用的菜单 null为全部获取
+	* @param flag 是否需要迭代获取数组形式的菜单
+	* @param callback 回调函数
+	*/
     var getMenus = function(app,flag,callback){
         $.getJSON("/config/menu.json", function(config){
         	var menus = [];
@@ -226,13 +291,13 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
             		if(flag){
             			return callback(config[i]);
             		}else{
-            			menus = menuIterator([config[i]],menus);
+            			menus = menuIterator("menu_"+config[i].app,"root",[config[i]],menus);
             		}
             	}else if(config[i].app == app){//获取对应的一个
             		if(flag){
             			return callback(config[i]);
             		}else{
-            			menus = menuIterator([config[i]],[]);
+            			menus = menuIterator("menu_"+config[i].app,"root",[config[i]],[]);
             			break;
             		}
             		
@@ -241,6 +306,86 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
             return callback(menus);
         })
     }
+    /**  
+	* @description tab切换 阻止链接跳转
+	* @param pos jquery定位符
+	*/
+    var bootstrapTab = function(pos){
+    	$(pos+' a:first').tab('show');//初始化显示tab 
+        $(pos+' a').click(function (e) { 
+        	e.preventDefault();//阻止a链接的跳转行为 
+          	$(this).tab('show');//显示当前选中的链接及关联的content 
+        }) 
+    }
+    /**  
+	* @description 获取页面所有组件
+	* @param params 获取条件
+	* @param callback 回调函数
+	*/
+    var getComponent = function(params,callback){
+    	$.getJSON("/config/component.json",function(component){
+    		var paths = component.path;
+    		var ret = [];
+    		for(var i=0,len=paths.length;i<len;i++){
+    			(function(path,i){
+    				$.getJSON(path,function(config){
+	    				var obj = {
+	    					"name":config.name,
+	    					"code":config.code,
+	    					"pCode":config.pCode
+	    				}
+	    				ret.push(obj);
+	    				var modules = config.modules;
+	    				for(var j=0,moduleLen=modules.length;j<moduleLen;j++){
+	    					var moduleObj = {
+	    						"name":modules[j].caption,
+	    						"code":obj.code+modules[j].module,
+	    						"pCode":obj.code
+	    					} 
+	    					ret.push(moduleObj);
+	    					var pages = modules[j].pages;
+	    					for(var k=0,pageLen=pages.length;k<pageLen;k++){
+	    						var pageObj = {
+	    							"name":pages[k].caption,
+	    							"code":moduleObj.code+pages[k].id,
+	    							"pCode":moduleObj.code
+	    						}
+	    						ret.push(pageObj);
+	    						var components = pages[k].components;
+	    						for(var l=0,componentLen=components.length;l<componentLen;l++){
+	    							var componentObj = {
+	    								"name":components[l].caption,
+	    								"code":pageObj.code+components[l].component,
+	    								"pCode":pageObj.code
+	    							}
+	    							ret.push(componentObj);
+	    						}
+	    					}
+	    				} 
+	    				if(i == len-1){//表示全部执行完成
+    						return callback(ret);
+    					}
+	    			})
+    			})(paths[i],i)
+    		}
+    	})
+    }
+    /**  
+	* @description 判断数组中是否有obj元素
+	* @param arr 数组
+	* @param obj 元素
+	* @return boolean
+	*/
+	var contains = function (arr, obj) {
+	    var i = arr.length;
+	    while (i--) {
+	        if (arr[i] === obj) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+
 
     return {
         alert:alert,
@@ -254,6 +399,9 @@ define(["import/bootbox.min","datatables","datatables.bootstrap"],function (boot
         renderForm:renderForm,
         renderDataTable:renderDataTable,
         toJsonObject:toJsonObject,
-        getMenus:getMenus
+        getMenus:getMenus,
+        bootstrapTab:bootstrapTab,
+        getComponent:getComponent,
+        contains:contains
     }
 });

@@ -1,3 +1,6 @@
+/**
+* 部门模型
+*/
 var mongoose = require('mongoose');
 
 exports.DeptSchema = new mongoose.Schema({
@@ -7,5 +10,8 @@ exports.DeptSchema = new mongoose.Schema({
     pCode:String,
     desc:String,
     createUsername:String,
+    menus:[],
+    urls:[],
+    components:[],
     DateTime:{ type: Date, default: Date.now }
 });

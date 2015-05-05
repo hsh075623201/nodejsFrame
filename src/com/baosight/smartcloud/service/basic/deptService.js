@@ -1,4 +1,7 @@
 
+/**
+* 部门信息处理文件
+*/
 var mongoose = require('../../../../../../lib/db/mongodb.js');
 var DeptSchema = require('../../domain/deptModel.js').DeptSchema;
 var Dept = mongoose.model('dept', DeptSchema);
@@ -7,7 +10,7 @@ var DeptService = function() {
 };
 //获取部门信息
 DeptService.prototype.getDept = function(query,callback){
-	Dept.find(query,callback);
+	Dept.find(query).sort({name:1}).exec(callback);
 }
 //新增
 DeptService.prototype.add = function(obj,callback){
@@ -60,5 +63,19 @@ DeptService.prototype.addUser = function(obj,callback){
 //删除用户
 DeptService.prototype.deleteUser = function(obj,callback){
 	this.userService.deleteUser(obj,"deptArr",callback);
+}
+//新增资源
+DeptService.prototype.addResource = function(query,obj,callback){
+	//全部删除数据
+	Dept.update(query,{$unset:{"menus":1,"components":1,"urls":1}},function(error,doc){
+		if(error){
+			return callback(error);
+		}
+		//新增
+		Dept.update(query,{$addToSet:{"menus":{$each:obj.menu},"components":{$each:obj.component},"urls":{$each:obj.url}}},function(error,doc){
+			return callback(error,doc);
+		})
+	})
+	
 }
 module.exports = DeptService;

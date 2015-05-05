@@ -1,13 +1,11 @@
-define(["util","common/component","jquery.validform"],function (util,component) {
+/**
+* 处理用户信息文件
+*/
+define(["util","common/component","smartcloud/resourceController","jquery.validform","ztree"],function (util,component,resource) {
 
 	var url = "smartcloud/config/app.json";
 	//页面初始化 列表显示
 	var init = function(params){
-
-
-		component.getMenus("smartcloudServer",function(menus){
-			console.log(menus);
-		})
 
 		var params = params||{};//查询条件
 		var config = {
@@ -122,8 +120,44 @@ define(["util","common/component","jquery.validform"],function (util,component) 
 	var userPermission = function(){
 		alert("userPermission...");
 	};
-
-
+	//授权页面显示
+	var authorize = function(){
+		var username = component.getTableRadioVal("#users-table");
+		if(username){
+			util.slidePage("user.authorize",url);
+		}else{
+			component.alert("请选择授权的用户！");
+		}
+		
+	}
+	//授权操作
+	var authorizeCtrl = function(){
+		resource.getResource(function(){
+			var username = component.getTableRadioVal("#users-table");
+			util.get("/smartcloudServer/basic/user/getUser",{"username":username},function(data){
+				var obj = {
+					"menus":data[0].menus,
+					"components":data[0].components,
+					"urls":data[0].urls
+				}
+				resource.renderResource(obj);//渲染已授权的资源
+			})
+		});
+	}
+	//确认授权
+	var auth = function(){
+		var username = component.getTableRadioVal("#users-table");
+		var resourceObj = resource.getSelectedResource();
+		var obj = {
+			"username":username,
+			"resource":resourceObj
+		}
+		util.post("/smartcloudServer/basic/user/addResource",obj,function(data){
+			component.message("授权成功","success");	
+            util.slideHide();
+            return false;
+		})
+	}
 
 
 	return {
@@ -135,7 +169,10 @@ define(["util","common/component","jquery.validform"],function (util,component) 
 		deleteUser:deleteUser,
 		userPermission:userPermission,
 		addUserCtrl:addUserCtrl,
-		queryUserCtrl:queryUserCtrl
+		queryUserCtrl:queryUserCtrl,
+		authorize:authorize,
+		authorizeCtrl:authorizeCtrl,
+		auth:auth
 	}
 	
 });

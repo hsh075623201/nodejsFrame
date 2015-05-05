@@ -1,3 +1,6 @@
+/**
+* 菜单模型
+*/
 var mongoose = require('mongoose');
 
 exports.MenuSchema = new mongoose.Schema({

@@ -1,0 +1,16 @@
+
+/**
+* 资源操作文件
+*/
+var ResourceCmd = function(){
+	this.resourceService = null;
+};
+//获取资源
+ResourceCmd.prototype.getResource = function(req,res){
+	var obj = {} ;
+	this.resourceService.getResource(obj,function(error,result){
+		return res.json(error,result);
+	})
+}
+
+module.exports = ResourceCmd;

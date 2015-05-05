@@ -1,0 +1,88 @@
+define(["util","common/component","smartcloud/authorizeController","ztree"],function (util,component,auth) {
+
+	var getResource = function(){
+		component.bootstrapTab("#resource");
+		//获取菜单资源
+		component.getMenus(null,false,function(config){
+			var setting = {
+				data:{
+					simpleData:{
+						enable:true,
+						idKey:"code",
+						pIdKey:"pCode",
+						rootPid:"menu_root"
+					},
+					key:{
+                        name:"name"
+                    }
+				},
+				check: {
+					enable: true,
+					chkStyle: "checkbox"
+				}
+			};
+
+			var zTreeObj = $.fn.zTree.init($("#menuTree"), setting, config);
+			zTreeObj.expandAll(true);
+		})
+		//获取组件资源
+		component.getComponent({},function(config){
+			var setting = {
+				data:{
+					simpleData:{
+						enable:true,
+						idKey:"code",
+						pIdKey:"pCode",
+						rootPid:"component_root"
+					},
+					key:{
+                        name:"name"
+                    }
+				},
+				check: {
+					enable: true,
+					chkStyle: "checkbox"
+				}
+			};
+
+			var zTreeObj = $.fn.zTree.init($("#componentTree"), setting, config);
+			function filter(node) {
+	            return (node.level == 2);
+	        }
+	        var nodes = zTreeObj.getNodesByFilter(filter); // 查找节点集合
+	        zTreeObj.expandNode(nodes[0], true, false, true);
+		});
+		//获取url资源
+		util.get("/smartcloudServer/basic/resource/getResource",{},function(data){
+			var setting = {
+				data:{
+					simpleData:{
+						enable:true,
+						idKey:"code",
+						pIdKey:"pCode",
+						rootPid:"component_root"
+					},
+					key:{
+                        name:"name"
+                    }
+				},
+				check: {
+					enable: true,
+					chkStyle: "checkbox"
+				}
+			};
+
+			var zTreeObj = $.fn.zTree.init($("#urlTree"), setting, data);
+			function filter(node) {
+	            return (node.level == 2);
+	        }
+	        var nodes = zTreeObj.getNodesByFilter(filter); // 查找节点集合
+	        zTreeObj.expandNode(nodes[0], true, false, true);
+		})
+		//选中易授权的信息
+
+	}
+	return {
+		getResource:getResource
+	}
+})

@@ -1,4 +1,7 @@
-define(["util","common/component","jquery.validform"],function (util,component) {
+/**
+* 处理角色信息文件
+*/
+define(["util","common/component","smartcloud/resourceController","jquery.validform"],function (util,component,resource) {
 
 	var url = "smartcloud/config/app.json";
 	//页面初始化 列表显示
@@ -200,6 +203,46 @@ define(["util","common/component","jquery.validform"],function (util,component) 
 		}
 		
 	}
+
+	//授权页面显示
+	var authorize = function(){
+		var _id = component.getTableRadioVal("#role-table");
+		if(_id){
+			util.slidePage("role.authorize",url);
+		}else{
+			component.alert("请选择授权的角色！");
+		}
+	}
+	//授权操作
+	var authorizeCtrl = function(){
+		//获取所有资源
+		resource.getResource(function(){
+			var _id = component.getTableRadioVal("#role-table");
+			util.get("/smartcloudServer/basic/role/getRole",{"_id":_id},function(data){
+				var obj = {
+					"menus":data[0].menus,
+					"components":data[0].components,
+					"urls":data[0].urls
+				}
+				resource.renderResource(obj);//渲染已授权的资源
+			})
+		});
+		
+	}
+	//确认授权
+	var auth = function(){
+		var _id = component.getTableRadioVal("#role-table");
+		var resourceObj = resource.getSelectedResource();
+		var obj = {
+			"id":_id,
+			"resource":resourceObj
+		}
+		util.post("/smartcloudServer/basic/role/addResource",obj,function(data){
+			component.message("授权成功","success");	
+            util.slideHide();
+            return false;
+		})
+	}
 	return {
 		init:init,
 		addRole:addRole,
@@ -213,7 +256,10 @@ define(["util","common/component","jquery.validform"],function (util,component) 
 		userManageCtrl:userManageCtrl,
 		roleAddUser:roleAddUser,
 		roleAddUserCtrl:roleAddUserCtrl,
-		roleDeleteUser:roleDeleteUser
+		roleDeleteUser:roleDeleteUser,
+		authorize:authorize,
+		authorizeCtrl:authorizeCtrl,
+		auth:auth
 	}
 	
 });

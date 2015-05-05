@@ -1,0 +1,15 @@
+
+{
+    "apps": [
+        {
+            "name": "智慧云平台",
+            "code": "smartcloudServer",
+            "path":"com/baosight/smartcloud"
+        },
+        {
+            "name": "公有平台",
+            "code": "coreServer",
+            "path":"com/baosight/core"
+        }
+    ]
+}

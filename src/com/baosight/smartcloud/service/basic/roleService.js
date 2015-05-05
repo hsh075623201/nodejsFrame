@@ -1,8 +1,9 @@
+/**
+* 角色信息处理文件
+*/
 var mongoose = require('../../../../../../lib/db/mongodb.js');
 var RoleSchema = require('../../domain/roleModel.js').RoleSchema;
 var Role = mongoose.model('role', RoleSchema);
-
-
 
 var RoleService = function() {
 	this.userService = null;
@@ -94,5 +95,19 @@ RoleService.prototype.addUser = function(obj,callback){
 //删除用户
 RoleService.prototype.deleteUser = function(obj,callback){
 	this.userService.deleteUser(obj,"roleArr",callback);
+}
+//新增资源
+RoleService.prototype.addResource = function(query,obj,callback){
+	//全部删除数据
+	Role.update(query,{$unset:{"menus":1,"components":1,"urls":1}},function(error,doc){
+		if(error){
+			return callback(error);
+		}
+		//新增
+		Role.update(query,{$addToSet:{"menus":{$each:obj.menu},"components":{$each:obj.component},"urls":{$each:obj.url}}},function(error,doc){
+			return callback(error,doc);
+		})
+	})
+	
 }
 module.exports = RoleService;

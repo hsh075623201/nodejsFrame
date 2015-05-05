@@ -1,3 +1,6 @@
+/**
+* 角色操作文件
+*/
 var RoleCmd = function(){
 	this.roleService = null;
 };
@@ -6,6 +9,7 @@ RoleCmd.prototype.add = function(req,res){
 
 	var obj = JSON.parse(req.body.params);
 	obj.createUsername = req.session.user.username;
+    obj.code = "role_"+obj.code;
     this.roleService.add(obj,function(error,result){
         return res.json(error,result);
     })
@@ -136,6 +140,17 @@ RoleCmd.prototype.addUser = function(req,res){
 RoleCmd.prototype.deleteUser = function(req,res){
     var obj = JSON.parse(req.body.params);
     this.roleService.deleteUser(obj,function(error,result){
+        return res.json(error,result);
+    })
+}
+//新增资源
+RoleCmd.prototype.addResource = function(req,res){
+    var obj = JSON.parse(req.body.params);
+    var query = {
+        "_id":obj.id
+    }
+    var resource = obj.resource;
+    this.roleService.addResource(query,resource,function(error,result){
         return res.json(error,result);
     })
 }
