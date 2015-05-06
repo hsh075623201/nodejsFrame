@@ -301,24 +301,7 @@ define(["util","import/bootbox.min","datatables","datatables.bootstrap"],functio
             		
             	}
             }
-            //判断是否是管理员
-            get("/smartcloudServer/basic/user/isAdmin",{},function(flag){
-            	if(flag){//管理员无需判断权限
-            		return callback(menus);
-            	}else{
-            		//获取菜单权限
-            		get("/smartcloudServer/cache/redis/getAuthorize",{"type":"menu"},function(data){
-            			var ret = [];
-            			for(var i=0,len=menus.length;i<len;i++){
-            				if(contains(data,menus[i].code)){
-            					ret.push(menus[i]);
-            				}
-            			}
-            			return callback(ret);
-            		})
-            	}
-            })
-            
+            return callback(menus);
         })
     }
     /**  

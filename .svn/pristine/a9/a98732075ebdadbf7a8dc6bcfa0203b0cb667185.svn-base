@@ -3,7 +3,6 @@
 */
 var UserCmd = function() {
     this.userService = null;
-    this.redisService = null;
 };
 
 /**  
@@ -28,7 +27,6 @@ UserCmd.prototype.isAdmin = function(req,res,callback){
 * @return json
 */ 
 UserCmd.prototype.login = function(req,res){
-    var _this = this;
     var obj = {
         "username": req.body.username,
         "password": req.body.password
@@ -36,8 +34,7 @@ UserCmd.prototype.login = function(req,res){
     this.userService.getUser(obj,function(error,result){
         if(result&&result.length>0){
              req.session.user = result[0];
-             console.log("user login...");
-            _this.redisService.load(obj.username);//登录 加载 缓存
+            //todo 加载用户的redis缓存  还没做  
             return res.redirect("/"); 
         }else{
             return res.redirect("/login");
@@ -61,6 +58,7 @@ UserCmd.prototype.reg = function(req,res){
             return res.json(error);
         }else{
              req.session.user = result;
+            //todo 加载用户的redis缓存  还没做  
             return res.redirect("/");
         }
     })

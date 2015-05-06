@@ -66,9 +66,9 @@ exports.checkNotLogin = function (req, res, next) {
 * @param next
 * @return true/false
 */ 
-var urlFilter = function (path){
-    for(var i =0 ;i<config.urlFilter.length;i++){
-        if(path.indexOf(config.urlFilter[i])!=-1){
+var filterUrl = function (path){
+    for(var i =0 ;i<config.filterUrl.length;i++){
+        if(path.indexOf(config.filterUrl[i])!=-1){
             return true ;
         }
     }
@@ -85,30 +85,27 @@ exports.validatePermission = function (req, res, next){
     pathArr.shift();
     var path = pathArr.join("/");
     //过滤url权限判断
-    if(urlFilter(path)){
+    if(filterUrl(path)){
         next();
     }else{
+        var username =req.session.user.username;
         //是否是管理员
         Bearcat.getBean("smartcloud:userCmd")["isAdmin"](req,res,function(error,result){
             if(error){
-                return res.json({"status":-1,"message":error});
-                //return res.render('error',{"message":error});
+                return res.render('error',{"message":error});
             }else{
                 if(result){
                     next();//管理员无需验证权限
                 }else{
-                    //获取url权限
-                    Bearcat.getBean("smartcloud:redisService")["getAuthorize"](req.session.user.username,"url",function(error,result){
+                    //非管理员验证权限
+                    Bearcat.getBean("smartcloud:redisCmd")["isPathAccessByUserName"](username,path,function(error,result){
                         if(error){
-                            //return res.render('error',{"message":error});
-                            return res.json({"status":-1,"message":error});
+                            return res.render('error',{"message":error});
                         }else{
-                            var flag = Bearcat.getBean("core:utilCmd")["contains"](result,"url_"+path.replace(/\//g,""));
-                            if(flag){
+                            if(result){
                                 next();//权限验证通过
                             }else{
-                                return res.json({"status":-1,"message":"无权限访问!"});
-                                //return res.render('error',{"message":"无权限访问！，请联系管理员"});
+                                return res.render('error',{"message":"无权限访问！，请联系管理员"});
                             }
                         }
                     })

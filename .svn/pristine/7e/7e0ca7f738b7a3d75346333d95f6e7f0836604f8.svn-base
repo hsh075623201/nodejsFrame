@@ -1,7 +1,7 @@
 /**
 * 封装公共前端组件
 */
-define(["util","import/bootbox.min","datatables","datatables.bootstrap"],function (util,bootbox) {
+define(["import/bootbox.min","datatables","datatables.bootstrap"],function (bootbox) {
 	/**  
 	* @description 重写alert
 	* @param message 弹出消息
@@ -255,8 +255,8 @@ define(["util","import/bootbox.min","datatables","datatables.bootstrap"],functio
 	* @return 处理后的菜单结果
 	*/
     var menuIterator = function(code,pCode,config,menus){
-
-		for(var i=0,len=config.length;i<len;i++){
+    	for(var i=0,len=config.length;i<len;i++){
+    		
     		var obj = {
     			"name":config[i].name,
     			"hash":config[i].hash,
@@ -266,12 +266,14 @@ define(["util","import/bootbox.min","datatables","datatables.bootstrap"],functio
     			"pCode":pCode
     		};
     		menus.push(obj);
+
     		var flag = config[i].children&&config[i].children.length>0;
 	        if(flag){
 	            menuIterator(code,obj.code,config[i].children,menus);
 	        }
-    	}
-    	return menus;	
+	    }
+
+	    return menus;
 
     }
 
@@ -301,24 +303,7 @@ define(["util","import/bootbox.min","datatables","datatables.bootstrap"],functio
             		
             	}
             }
-            //判断是否是管理员
-            get("/smartcloudServer/basic/user/isAdmin",{},function(flag){
-            	if(flag){//管理员无需判断权限
-            		return callback(menus);
-            	}else{
-            		//获取菜单权限
-            		get("/smartcloudServer/cache/redis/getAuthorize",{"type":"menu"},function(data){
-            			var ret = [];
-            			for(var i=0,len=menus.length;i<len;i++){
-            				if(contains(data,menus[i].code)){
-            					ret.push(menus[i]);
-            				}
-            			}
-            			return callback(ret);
-            		})
-            	}
-            })
-            
+            return callback(menus);
         })
     }
     /**  
@@ -400,45 +385,6 @@ define(["util","import/bootbox.min","datatables","datatables.bootstrap"],functio
 	    }
 	    return false;
 	}
-	 /**  
-    * @description 返回结果统一处理
-    * @param data 返回结果
-    * @param callback 回调函数
-    */ 
-	var resProcess = function(data,callback){
-		var _this = this;
-	    if(data.status==-1){
-	        alert("运行异常，异常信息："+data.message+",请与管理员联系！");
-	        return ;
-	    }else{
-	        return callback(data.doc);
-	    }
-	};
-    /**  
-    * @description 封装get请求
-    * @param path 请求路径
-    * @param params 请求条件
-    * @param callback 回调函数
-    */ 
-    var get = function(path,params,callback){
-    	params.random = Math.random();
-    	$.get(path, params,function(data){
-            return resProcess(data,callback);
-        });
-    };
-    /**  
-    * @description 封装post请求
-    * @param path 请求路径
-    * @param params 请求条件
-    * @param callback 回调函数
-    */ 
-    var post = function(path,params,callback){
-    	var params = JSON.stringify(params);
-        console.log(params);
-	    $.post(path,{"params":params},function(data){
-	        return resProcess(data,callback);
-	    });
-    };
 
 
     return {
@@ -456,8 +402,6 @@ define(["util","import/bootbox.min","datatables","datatables.bootstrap"],functio
         getMenus:getMenus,
         bootstrapTab:bootstrapTab,
         getComponent:getComponent,
-        contains:contains,
-        get:get,
-    	post:post,
+        contains:contains
     }
 });

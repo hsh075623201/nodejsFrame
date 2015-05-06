@@ -34,15 +34,7 @@ RedisService.prototype.load = function(username){
 			for(var i=0,len=deptCodes.length;i<len;i++){
 				resource = resource.concat(_this.tailRescuvie(doc,deptCodes[i],[]));
 			}
-
-			redisClient.del(username,function(err,reply){
-				if(err){
-					throw err;
-				}
-			    redisClient.SADD(username,resource);//放入redis缓存
-			})
-
-			
+			redisClient.SADD(username,resource);//放入redis缓存
 		})
 		
 
@@ -70,24 +62,10 @@ RedisService.prototype.tailRescuvie = function(depts,code,codes){
 /**  
 * @description 获取权限列表
 * @param username 用户名
-* @param type 类型  menu url component
 * @param callback 回调函数
 */ 
-RedisService.prototype.getAuthorize = function(username,type,callback){
-	redisClient.SMEMBERS(username,function(error,doc){
-		if(type){
-			var match = new RegExp('^'+type+'_.+$');
-			var ret = [];
-			for(var i=0;i<doc.length;i++){
-	            if(match.test(doc[i])){
-	                ret.push(doc[i]);
-	            }
-	        }
-	        return callback(error,ret);
-		}else{
-			return callback(error,doc);
-		}
-	});
+RedisService.prototype.getAuthorize = function(username,callback){
+	redisClient.SMEMBERS(username,callback);
 }
 
 module.exports = RedisService;

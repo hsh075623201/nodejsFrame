@@ -1,0 +1,47 @@
+/**
+* 缓存操作文件
+*/
+var RedisCmd = function(){
+	this.redisService = null;
+};
+/**  
+* @description 根据用户名加载权限
+* @param req
+* @param res
+*/ 
+RedisCmd.prototype.load = function(req,res){
+	var username = req.param("username");
+	this.redisService.load(username);
+}
+/**  
+* @description 根据用户名获取权限信息
+* @param req
+* @param res
+*/ 
+RedisCmd.prototype.getAuthorize = function(req,res){
+	var username = req.param("username");
+	var type = req.param("type");//哪种权限信息 url menu component
+	this.redisService.getAuthorize(username,function(error,result){
+		if(type){
+			var match = new RegExp('^'+type+'_.+$');
+			var ret = [];
+			for(var i=0;i<result.length;i++){
+	            if(match.test(result[i])){
+	                ret.push(result[i]);
+	            }
+	        }
+	        return res.json(error,ret);
+		}else{
+			return res.json(error,result);
+		}
+        
+		
+	})
+}
+
+//用户是否具有访问页面权限  TODO
+RedisCmd.prototype.isPathAccessByUserName = function(username,path,callback){
+	return callback(error,true);
+}
+
+module.exports = RedisCmd;

@@ -49,7 +49,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
         	showAllError:true,
         	callback:function(form){
         		var jsonForm = component.toJsonObject($form);
-        		component.post("/smartcloudServer/basic/user/add",jsonForm,function(ret){
+        		util.post("/smartcloudServer/basic/user/add",jsonForm,function(ret){
         			component.message("保存成功","success");
         			init();
         		})
@@ -97,7 +97,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
     */
 	var editUserCtrl = function(){
 		var username = component.getTableRadioVal("#users-table");
-		component.get("/smartcloudServer/basic/user/getUser",{"username":username},function(result){
+		util.get("/smartcloudServer/basic/user/getUser",{"username":username},function(result){
 			var data = result[0];
 			data.rePassword = data.password;
 			component.renderForm("#editUserForm",result[0]);
@@ -109,7 +109,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 	            callback:function(form){
 	                //更新数据
 	                var jsonForm = component.toJsonObject($form);
-	                component.post("/smartcloudServer/basic/user/update",jsonForm,function(result){
+	                util.post("/smartcloudServer/basic/user/update",jsonForm,function(result){
 	                	component.message("更新成功","success");
 	                	init();//重新初始化
 	                })
@@ -125,7 +125,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 	var deleteUser = function(){
 		var username = component.getTableRadioVal("#users-table");
 		if(username){
-			component.post("/smartcloudServer/basic/user/delete",{"username":username},function(result){
+			util.post("/smartcloudServer/basic/user/delete",{"username":username},function(result){
 				component.message("删除成功","success");
 				init();
 			})
@@ -157,7 +157,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 	var authorizeCtrl = function(){
 		resource.getResource(function(){
 			var username = component.getTableRadioVal("#users-table");
-			component.get("/smartcloudServer/basic/user/getUser",{"username":username},function(data){
+			util.get("/smartcloudServer/basic/user/getUser",{"username":username},function(data){
 				var obj = {
 					"menus":data[0].menus,
 					"components":data[0].components,
@@ -177,7 +177,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 			"username":username,
 			"resource":resourceObj
 		}
-		component.post("/smartcloudServer/basic/user/addResource",obj,function(data){
+		util.post("/smartcloudServer/basic/user/addResource",obj,function(data){
 			component.message("授权成功","success");	
             util.slideHide();
             return false;

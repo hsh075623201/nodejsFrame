@@ -23,7 +23,7 @@ UserService.prototype.isAdmin = function(username,callback){
 }
 /**  
 * @description 加密 
-* @param pwd 加密字符串
+* @param pwd 密码
 */
 UserService.prototype.parsePwd = function(pwd){
 	return crypto.createHash('md5').update(pwd).digest('base64');
@@ -202,13 +202,6 @@ UserService.prototype.addResource = function(query,obj,callback){
 			return callback(error,doc);
 		})
 	})
-}
-/**  
-* @description 获取所有资源 包括其所属组织的资源
-* @param query 查询条件
-* @param callback 回调函数
-*/
-UserService.prototype.getAllResource = function(query,callback){
-	User.find(query).populate(["deptArr","roleArr"]).exec(callback);
+	
 }
 module.exports = UserService;

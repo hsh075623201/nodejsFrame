@@ -48,7 +48,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
         	showAllError:true,
         	callback:function(form){
         		var jsonForm = component.toJsonObject($form);
-        		component.post("/smartcloudServer/basic/role/add",jsonForm,function(ret){
+        		util.post("/smartcloudServer/basic/role/add",jsonForm,function(ret){
         			component.message("保存成功","success");
         			init();
         		})
@@ -95,7 +95,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
     */
 	var editRoleCtrl = function(){
 		var _id = component.getTableRadioVal("#role-table");
-		component.get("/smartcloudServer/basic/role/getRole",{"_id":_id},function(result){
+		util.get("/smartcloudServer/basic/role/getRole",{"_id":_id},function(result){
 			component.renderForm("#editRoleForm",result[0]);
 			var $form = $("#editRoleForm");
 			$form.Validform({
@@ -105,7 +105,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 	            callback:function(form){
 	                //更新数据
 	                var jsonForm = component.toJsonObject($form);
-	                component.post("/smartcloudServer/basic/role/update",jsonForm,function(result){
+	                util.post("/smartcloudServer/basic/role/update",jsonForm,function(result){
 	                	component.message("更新成功","success");
 	                	init();//重新初始化
 	                })
@@ -121,7 +121,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 	var deleteRole = function(){
 		var _id = component.getTableRadioVal("#role-table");
 		if(_id){
-			component.post("/smartcloudServer/basic/role/delete",{"_id":_id},function(result){
+			util.post("/smartcloudServer/basic/role/delete",{"_id":_id},function(result){
 				component.message("删除成功","success");
 				init();
 			})
@@ -203,7 +203,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 		var _id = component.getTableRadioVal("#role-table");
 		$("#roleUserModal").modal("toggle");//隐藏
 		if(values.length>0&&_id){
-			component.post("/smartcloudServer/basic/role/addUser",{"username":values,"_id":_id},function(result){
+			util.post("/smartcloudServer/basic/role/addUser",{"username":values,"_id":_id},function(result){
 				component.message("添加成功","success");
 				userManage();
 			})
@@ -217,7 +217,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 		var username = component.getTableRadioVal("#role-user-table");
 		var _id = component.getTableRadioVal("#role-table");
 		if(_id){
-			component.post("/smartcloudServer/basic/role/deleteUser",{"username":username,"_id":_id},function(result){
+			util.post("/smartcloudServer/basic/role/deleteUser",{"username":username,"_id":_id},function(result){
 				component.message("删除成功","success");
 				userManage();
 			})
@@ -244,7 +244,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 		//获取所有资源
 		resource.getResource(function(){
 			var _id = component.getTableRadioVal("#role-table");
-			component.get("/smartcloudServer/basic/role/getRole",{"_id":_id},function(data){
+			util.get("/smartcloudServer/basic/role/getRole",{"_id":_id},function(data){
 				var obj = {
 					"menus":data[0].menus,
 					"components":data[0].components,
@@ -265,7 +265,7 @@ define(["util","common/component","smartcloud/resourceController","jquery.validf
 			"id":_id,
 			"resource":resourceObj
 		}
-		component.post("/smartcloudServer/basic/role/addResource",obj,function(data){
+		util.post("/smartcloudServer/basic/role/addResource",obj,function(data){
 			component.message("授权成功","success");	
             util.slideHide();
             return false;

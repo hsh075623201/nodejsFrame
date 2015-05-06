@@ -21,8 +21,20 @@ RedisCmd.prototype.load = function(req,res){
 RedisCmd.prototype.getAuthorize = function(req,res){
 	var username = req.session.user.username;
 	var type = req.param("type");//哪种权限信息 url menu component
-	this.redisService.getAuthorize(username,type,function(error,result){
-		return res.json(error,result);
+	this.redisService.getAuthorize(username,function(error,result){
+		if(type){
+			var match = new RegExp('^'+type+'_.+$');
+			var ret = [];
+			for(var i=0;i<result.length;i++){
+	            if(match.test(result[i])){
+	                ret.push(result[i]);
+	            }
+	        }
+	        return res.json(error,ret);
+		}else{
+			return res.json(error,result);
+		}
+        
 		
 	})
 }

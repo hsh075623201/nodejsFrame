@@ -23,7 +23,7 @@ UserService.prototype.isAdmin = function(username,callback){
 }
 /**  
 * @description 加密 
-* @param pwd 加密字符串
+* @param pwd 密码
 */
 UserService.prototype.parsePwd = function(pwd){
 	return crypto.createHash('md5').update(pwd).digest('base64');

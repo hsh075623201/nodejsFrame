@@ -112,7 +112,45 @@ define(["common/component","pageslide"],function (component) {
 		})
 	};
 
-   
+    /**  
+    * @description 返回结果统一处理
+    * @param data 返回结果
+    * @param callback 回调函数
+    */ 
+	var resProcess = function(data,callback){
+		var _this = this;
+	    if(data.status==-1){
+	        component.alert("运行异常，异常信息："+data.message+",请与管理员联系！");
+	        return ;
+	    }else{
+	        return callback(data.doc);
+	    }
+	};
+    /**  
+    * @description 封装get请求
+    * @param path 请求路径
+    * @param params 请求条件
+    * @param callback 回调函数
+    */ 
+    var get = function(path,params,callback){
+    	params.random = Math.random();
+    	$.get(path, params,function(data){
+            return resProcess(data,callback);
+        });
+    };
+    /**  
+    * @description 封装post请求
+    * @param path 请求路径
+    * @param params 请求条件
+    * @param callback 回调函数
+    */ 
+    var post = function(path,params,callback){
+    	var params = JSON.stringify(params);
+        console.log(params);
+	    $.post(path,{"params":params},function(data){
+	        return resProcess(data,callback);
+	    });
+    };
     /**  
     * @description 侧滑页面显示
     * @param hashStr 页面定位符
@@ -140,7 +178,11 @@ define(["common/component","pageslide"],function (component) {
 
     return {
     	parsePage:parsePage,
+    	get:get,
+    	post:post,
     	slidePage:slidePage,
-    	slideHide:slideHide 
+    	slideHide:slideHide
+       
+       
     }
 });
