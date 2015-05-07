@@ -20,7 +20,7 @@ var config = require('../config/config.json');
 exports.loginRender = function(req, res) {
     return res.render('login', {
         title: '用戶登入',
-        error:"",
+        error:"error",
         layout:false
     });
 };

@@ -36,7 +36,6 @@ UserCmd.prototype.login = function(req,res){
     this.userService.getUser(obj,function(error,result){
         if(result&&result.length>0){
              req.session.user = result[0];
-             console.log("user login...");
             _this.redisService.load(obj.username);//登录 加载 缓存
             return res.redirect("/"); 
         }else{
