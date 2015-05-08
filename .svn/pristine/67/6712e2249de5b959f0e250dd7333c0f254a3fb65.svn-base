@@ -25,6 +25,7 @@ UserCmd.prototype.isAdmin = function(req,res,callback){
 * @description 登录
 * @param req
 * @param res
+* @return json
 */ 
 UserCmd.prototype.login = function(req,res){
     var _this = this;

@@ -41,13 +41,15 @@ bearcat.start(function() {
         
         var url = req.originalUrl;//获取url
         var user = req.session.user;//获取session中的user
-        var redirect = req.param("redirect");//获取重定向地址 认证服务
+
+        var redirect = req.param("redirect");//
         if(redirect){
             req.session.redirect = redirect;//保存第三方应用的回调地址
         }
 
         if (url != "/login" && !user&&url!="/reg") {
             return res.redirect("/login");
+            
         }
         next();
     });

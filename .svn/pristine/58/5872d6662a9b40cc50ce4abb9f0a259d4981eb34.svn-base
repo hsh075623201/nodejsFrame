@@ -90,13 +90,9 @@ exports.validatePermission = function (req, res, next){
     if(urlFilter(path)){
         next();
     }else{
-        var callbackFlag = req.param("callback");//是否跨域访问
         //是否是管理员
         Bearcat.getBean("smartcloud:userCmd")["isAdmin"](req,res,function(error,result){
             if(error){
-                if(callbackFlag){
-                    return res.jsonp({"status":-1,"message":error});
-                }
                 return res.json({"status":-1,"message":error});
                 //return res.render('error',{"message":error});
             }else{
@@ -106,18 +102,13 @@ exports.validatePermission = function (req, res, next){
                     //获取url权限
                     Bearcat.getBean("smartcloud:redisService")["getAuthorize"](req.session.user.username,"url",function(error,result){
                         if(error){
-                            if(callbackFlag){
-                                return res.jsonp({"status":-1,"message":error});
-                            }
+                            //return res.render('error',{"message":error});
                             return res.json({"status":-1,"message":error});
                         }else{
                             var flag = Bearcat.getBean("core:utilCmd")["contains"](result,"url_"+path.replace(/\//g,""));
                             if(flag){
                                 next();//权限验证通过
                             }else{
-                                if(callbackFlag){
-                                    return res.jsonp({"status":-1,"message":"无权限访问!"});
-                                }
                                 return res.json({"status":-1,"message":"无权限访问!"});
                                 //return res.render('error',{"message":"无权限访问！，请联系管理员"});
                             }

@@ -4,15 +4,8 @@
     "port":"3000",
     "dbName":"smartcloud",
     "dbHost":"localhost",
-    "uploadDir":"/public",
-    "uploadUrl":"/upload",
-    "SysAdmin":"sysadmin",
-    "SysPassword":"password",
     "redisPort":"6379",
     "redisHost":"localhost",
-    "logDir":"/logs",
-    "bpaasServer" : "31.16.1.74",
-    "oauthIsValidate":false,
 
     "urlFilter":[
         "config",
