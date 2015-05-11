@@ -1,0 +1,21 @@
+
+{
+    "cookiesecret":"smartcloud",
+    "port":"3000",
+    "dbName":"smartcloud",
+    "dbHost":"localhost",
+    "redisPort":"6379",
+    "redisHost":"localhost",
+
+    "urlFilter":[
+        "config",
+        "smartcloudServer/basic/user/isAdmin",
+        "smartcloudServer/cache/redis/getAuthorize"
+    ],
+    "menuFilter":[
+        
+    ],
+    "menu":[
+        
+    ]
+}
