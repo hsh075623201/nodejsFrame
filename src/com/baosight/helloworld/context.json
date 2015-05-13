@@ -1,0 +1,9 @@
+{
+    "name": "helloworld",
+    "namespace":"helloworld",
+    "beans":[
+        {"id": "helloCmd","func": "cmd.helloCmd","props": [{"name": "helloService","ref": "helloworld:helloService"}]},
+        {"id": "helloService","func": "service.helloService"}
+       
+    ]
+}

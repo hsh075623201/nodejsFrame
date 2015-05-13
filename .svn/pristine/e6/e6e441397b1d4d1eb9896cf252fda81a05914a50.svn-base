@@ -1,7 +1,6 @@
 /**
 * 封装公共前端组件
 */
-
 define(["util","import/bootbox.min","datatables","datatables.bootstrap","jquery.validform"],function (util,bootbox) {
 	/**  
 	* @description 重写alert
@@ -435,6 +434,7 @@ define(["util","import/bootbox.min","datatables","datatables.bootstrap","jquery.
     */ 
     var post = function(path,params,callback){
     	var params = JSON.stringify(params);
+        console.log(params);
 	    $.post(path,{"params":params},function(data){
 	        return resProcess(data,callback);
 	    });
@@ -442,7 +442,7 @@ define(["util","import/bootbox.min","datatables","datatables.bootstrap","jquery.
     /**  
     * @description 验证表单
     * @param $form jquery表单
-    * @param option validform配置
+    * @param option 配置
     * @param callback 回调函数
     */ 
     var validform = function($form,option,callback){

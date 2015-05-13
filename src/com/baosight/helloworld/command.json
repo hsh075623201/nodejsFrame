@@ -1,0 +1,10 @@
+
+{
+    "modules": [
+        {"module":"hellomodule","caption":"hello模块","desc":"hello模块","commands":[
+            {"cmd": "hellocmd","id":"helloworld:helloCmd","caption":"hello cmd","desc":"hello bean","methods":[
+                {"method":"hello","caption":"hello方法","desc":"hello方法"}
+            ]}
+        ]}
+    ]
+}
