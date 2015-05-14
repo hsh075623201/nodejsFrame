@@ -2,7 +2,7 @@
 * 封装公共前端组件
 */
 
-define(["util","import/bootbox.min","datatables","datatables.bootstrap","jquery.validform"],function (util,bootbox) {
+define(["import/bootbox.min","datatables","datatables.bootstrap","jquery.validform"],function (bootbox) {
 	/**  
 	* @description 重写alert
 	* @param message 弹出消息
