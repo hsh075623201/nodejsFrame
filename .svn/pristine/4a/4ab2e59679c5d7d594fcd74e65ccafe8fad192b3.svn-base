@@ -129,8 +129,6 @@ UserService.prototype.getAllocationInfo = function(obj,params,allocation,callbac
 		query = {"roleArr":params._id};
 	}else if(allocation == "deptArr"){
 		query = {"deptArr":params._id};
-	}else if(allocation == "usergroupArr"){
-		query = {"usergroupArr":params._id};
 	}
 	this.pagination(obj,query,callback);
 }
@@ -147,8 +145,6 @@ UserService.prototype.getNeedUser = function(obj,params,allocation,callback){
 		query = {"roleArr":{$ne:params._id}};
 	}else if(allocation == "deptArr"){
 		query = {"deptArr":{$ne:params._id}};
-	}else if(allocation == "usergroupArr"){
-		query = {"usergroupArr":{$ne:params._id}};
 	}
 	this.pagination(obj,query,callback);
 };
@@ -165,8 +161,6 @@ UserService.prototype.addUser = function(obj,allocation,callback){
 		add = {"roleArr":obj._id};
 	}else if(allocation == "deptArr"){
 		add = {"deptArr":obj._id};
-	}else if(allocation == "usergroupArr"){
-		add = {"usergroupArr":obj._id};
 	}
 
 	User.update(query,{$addToSet:add}, {multi : true },callback);
@@ -189,8 +183,6 @@ UserService.prototype.deleteUser = function(obj,allocation,callback){
 		del = {"roleArr":obj._id};
 	}else if(allocation == "deptArr"){
 		del = {"deptArr":obj._id};
-	}else if(allocation == "usergroupArr"){
-		del = {"usergroupArr":obj._id};
 	}
 	User.update(query,{$pull:del},{multi:true},callback);
 }
@@ -218,6 +210,6 @@ UserService.prototype.addResource = function(query,obj,callback){
 * @param callback 回调函数
 */
 UserService.prototype.getAllResource = function(query,callback){
-	User.find(query).populate(["deptArr","roleArr","usergroupArr"]).exec(callback);
+	User.find(query).populate(["deptArr","roleArr"]).exec(callback);
 }
 module.exports = UserService;

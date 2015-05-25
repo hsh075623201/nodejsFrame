@@ -1,0 +1,78 @@
+/**
+* 用户组操作
+*/
+var mongoose = require('../../../../../../lib/db/mongodb.js');
+var UsergroupSchema = require('../../domain/usergroupModel.js').UsergroupSchema;
+var Usergroup = mongoose.model('usergroup', UsergroupSchema);
+
+var UsergroupService = function() {
+	this.userService = null;
+};
+
+/**  
+* @description 分页 
+* @param obj 参数对象
+* @param query 查询条件
+* @param callback 回调函数
+*/
+UsergroupService.prototype.pagination = function(obj,query,callback){
+	
+	Usergroup.count(query).exec(function(err,count){
+        if (err){
+            return callback(err,null);
+        }else{
+            Usergroup.find(query).skip(obj.iDisplayStart)
+                .limit(obj.iDisplayLength)
+                .sort(obj.sort)
+                .exec(function(error, data) {
+                    var result = {};
+                    result.sEcho=obj.sEcho;
+                    result.iTotalRecords=count;
+                    result.iTotalDisplayRecords=count;
+                    result.iDisplayStart = obj.iDisplayStart;
+                    result.aaData = data;
+                    return callback(error,result);
+                });
+        }
+    });
+};
+
+/**  
+* @description 验证是否已存在编码或名称 
+* @param query 查询条件
+* @param callback 回调函数
+*/
+UsergroupService.prototype.validate = function(query,callback){
+	Usergroup.find(query,callback);
+}
+
+/**  
+* @description 新增用户组 
+* @param obj 参数对象
+* @param callback 回调函数
+*/
+UsergroupService.prototype.add = function(obj,callback){
+	var _this = this;
+	var filter = {$or:[{"name":obj.name},{"code":obj.code}]};
+	this.validate(filter,function(error,doc){
+		if(error){
+			return callback(error);
+		}else{
+			if(doc.length){
+				return callback("该用户组名称或编码已存在！");
+			}else{
+				_this.save(obj,callback);
+			}
+		}
+	});
+};
+/**  
+* @description 保存 
+* @param obj 参数对象
+* @param callback 回调函数
+*/
+UsergroupService.prototype.save = function(obj,callback){
+	var newUsergroup = new Usergroup(obj);
+	newUsergroup.save(callback);
+};
+module.exports = UsergroupService;

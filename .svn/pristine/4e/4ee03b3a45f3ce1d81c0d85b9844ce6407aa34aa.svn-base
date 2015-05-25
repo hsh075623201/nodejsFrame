@@ -35,35 +35,23 @@ RedisService.prototype.load = function(username){
 				resource = resource.concat(_this.tailRescuvie(doc,deptCodes[i],[]));
 			}
 
-			redisClient.select(0,function(){
-				redisClient.del(username,function(err,reply){
-					if(err){
-						throw err;
-					}
-				    if(resource.length>0){
-						redisClient.SADD(username,resource);//放入redis缓存
-					}
-				})
-			});
-
 			redisClient.del(username,function(err,reply){
 				if(err){
 					throw err;
 				}
-
+<<<<<<< .mine
 				if(resource.length>0){
 					redisClient.SADD(username,resource);//放入redis缓存
 				}
 			    
-
+=======
 			    if(resource.length>0){
 					redisClient.SADD(username,resource);//放入redis缓存
 				}
-
+>>>>>>> .r519
 			})
 
 			
-
 		})
 		
 
@@ -95,48 +83,20 @@ RedisService.prototype.tailRescuvie = function(depts,code,codes){
 * @param callback 回调函数
 */ 
 RedisService.prototype.getAuthorize = function(username,type,callback){
-	redisClient.select(0,function(){
-		redisClient.SMEMBERS(username,function(error,doc){
-			if(type){
-				var match = new RegExp('^'+type+'_.+$');
-				var ret = [];
-				for(var i=0;i<doc.length;i++){
-		            if(match.test(doc[i])){
-		                ret.push(doc[i]);
-		            }
-		        }
-		        return callback(error,ret);
-			}else{
-				return callback(error,doc);
-			}
-		});
-	});
-	
-}
-/**  
-* @description 认证授权code保存
-* @param code 生成的code
-* @param callback 回调函数
-*/ 
-RedisService.prototype.addCode = function(code,callback){
-	//放入第二个空间内
-	redisClient.select(1,function(){
-		redisClient.set(code,code,function(err,reply){
-			redisClient.expire(code, 60*5);
-			return callback(err,reply);
-		})
+	redisClient.SMEMBERS(username,function(error,doc){
+		if(type){
+			var match = new RegExp('^'+type+'_.+$');
+			var ret = [];
+			for(var i=0;i<doc.length;i++){
+	            if(match.test(doc[i])){
+	                ret.push(doc[i]);
+	            }
+	        }
+	        return callback(error,ret);
+		}else{
+			return callback(error,doc);
+		}
 	});
 }
-/**  
-* @description 获取认证授权code
-* @param callback 回调函数
-*/ 
-RedisService.prototype.getCode = function(code,callback){
-	//放入第二个空间内
-	redisClient.select(1,function(){
-		redisClient.get(code,function(err,reply){
-			return callback(err,reply);
-		})
-	});
-}
+
 module.exports = RedisService;

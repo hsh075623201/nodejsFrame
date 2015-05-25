@@ -17,9 +17,6 @@
             ]},
             {"cmd": "resource","id":"smartcloud:resourceCmd","caption":"资源管理","desc":"资源管理","methods":[
                 
-            ]},
-            {"cmd": "usergroup","id":"smartcloud:usergroupCmd","caption":"用户组管理","desc":"用户组管理","methods":[
-                
             ]}
         ]},
         

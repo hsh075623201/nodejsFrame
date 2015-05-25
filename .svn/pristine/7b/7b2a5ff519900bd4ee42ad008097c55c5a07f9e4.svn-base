@@ -1,0 +1,128 @@
+/**
+* 第三方授权认证
+*/
+var crypto = require('crypto');
+
+var AuthorizeCmd = function(){
+	this.authorizeService = null;
+    this.redisService = null;
+    this.userService = null;
+};
+
+/**  
+* @description第三方授权注册列表
+* @param res
+* @param res
+*/
+AuthorizeCmd.prototype.pagination = function(req,res){
+    var sEcho = req.param("sEcho");
+    var iDisplayStart = req.param("iDisplayStart");
+    var iDisplayLength = req.param("iDisplayLength");
+    var iSortCol_0 = req.param("iSortCol_0");
+    var mSortDataProp = req.param("mDataProp_"+iSortCol_0);
+    var sortType = req.param("sSortDir_0");
+    var sortFlag = "-";
+    if(sortType == "asc"){
+        sortFlag = "-";
+    }else if(sortType == "desc"){
+        sortFlag = "";
+    }
+    var params = req.param("params");
+    var query={};
+    if(params){
+        var jsonObj = JSON.parse(params);
+        for(var attr in jsonObj){
+            query[attr]=new RegExp(jsonObj[attr]);//模糊查询参数
+        }
+    }
+    var obj = {
+        "iDisplayStart":iDisplayStart,
+        "iDisplayLength":iDisplayLength,
+        "sort":sortFlag+mSortDataProp,
+        "sEcho":sEcho
+    };
+
+    this.authorizeService.pagination(obj,query,function(error,result){
+        return res.json(error,result);
+    }) 
+}
+/**  
+* @description注册应用
+* @param res
+* @param res
+*/
+AuthorizeCmd.prototype.add = function(req,res){
+    var obj = JSON.parse(req.body.params);
+    var username = req.session.user.username;
+    obj.appKey = crypto.createHash('md5').update(username+"appKey"+Date.now()).digest('base64');
+    obj.appSecret = crypto.createHash('md5').update(username+"appSecret"+Date.now()).digest('base64');
+    obj.createUsername = username;
+    this.authorizeService.add(obj,function(error,result){
+        return res.json(error,result);
+    })
+}
+/**  
+* @description第三方授权认证
+* @param res
+* @param res
+*/
+AuthorizeCmd.prototype.authorize = function(req,res){
+
+    var redirect = req.session.redirect;//第三方回调地址
+    var username = req.session.user.username;
+    if(redirect){
+        req.session.redirect = null;
+        var code = crypto.createHash('md5').update(username+Date.now()).digest('base64');
+       this.redisService.addCode(code,function(err,result){
+       		if(err){
+       			return res.json({"status":"-1","message":"发生异常错误！"});
+       		}else{
+       			redirect+="?code="+encodeURIComponent(code)+"&username="+username;
+        		return res.redirect(redirect);
+       		}
+       }) 
+    }else{
+    	return res.json({"status":"-1","message":"授权错误，没有回调页面！"});
+    }
+}
+/**  
+* @description获取token
+* @param res
+* @param res
+*/
+AuthorizeCmd.prototype.getToken = function(req,res){
+    var _this = this;
+	var appKey = decodeURIComponent(req.body.appKey);
+    var appSecret = decodeURIComponent(req.body.appSecret);
+    var username = req.body.username;
+	var code = decodeURIComponent(req.body.code);
+	this.redisService.getCode(code,function(err,replyCode){
+		if(!replyCode){
+			return res.json({"status":"-1","message":"授权码已过期！"});
+		}
+		//验证信息 
+	    if(code != replyCode){
+	    	return res.json({"status":"-1","message":"信息验证错误！"});
+	    }
+        _this.authorizeService.query({"appKey":appKey,"appSecret":appSecret},function(error,result){
+            if(error){
+                return res.json({"status":"-1","message":error});
+            }
+            
+            if(result&&result.length){
+                var token = crypto.createHash('md5').update(code+appKey+appSecret+Date.now()).digest('base64');
+                _this.userService.update({"username":username,"token":token},function(error,result){
+                    if(error){
+                        return res.json({"status":"-1","message":error});
+                    }
+                    return res.json({"status":"1","message":token});
+                })
+                
+            }else{
+                return res.json({"status":"-1","message":"信息验证错误！"});
+            }
+        })
+	    
+	})
+}
+module.exports = AuthorizeCmd;

@@ -11,9 +11,6 @@
         {"id": "deptCmd","func": "cmd.basic.deptCmd","props": [{"name": "deptService","ref": "smartcloud:deptService"}]},
         {"id": "deptService","func": "service.basic.deptService","props": [{"name": "userService","ref": "smartcloud:userService"}]},
 
-        {"id": "usergroupCmd","func": "cmd.basic.usergroupCmd","props": [{"name": "usergroupService","ref": "smartcloud:usergroupService"}]},
-        {"id": "usergroupService","func": "service.basic.usergroupService","props": [{"name": "userService","ref": "smartcloud:userService"}]},
-
         {"id": "resourceCmd","func": "cmd.basic.resourceCmd","props": [{"name": "resourceService","ref": "smartcloud:resourceService"}]},
         {"id": "resourceService","func": "service.basic.resourceService"},
 

@@ -34,7 +34,6 @@ RedisService.prototype.load = function(username){
 			for(var i=0,len=deptCodes.length;i<len;i++){
 				resource = resource.concat(_this.tailRescuvie(doc,deptCodes[i],[]));
 			}
-
 			redisClient.select(0,function(){
 				redisClient.del(username,function(err,reply){
 					if(err){
@@ -45,25 +44,6 @@ RedisService.prototype.load = function(username){
 					}
 				})
 			});
-
-			redisClient.del(username,function(err,reply){
-				if(err){
-					throw err;
-				}
-
-				if(resource.length>0){
-					redisClient.SADD(username,resource);//放入redis缓存
-				}
-			    
-
-			    if(resource.length>0){
-					redisClient.SADD(username,resource);//放入redis缓存
-				}
-
-			})
-
-			
-
 		})
 		
 

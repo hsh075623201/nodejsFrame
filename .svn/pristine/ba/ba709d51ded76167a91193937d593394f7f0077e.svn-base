@@ -65,15 +65,6 @@
 			]},
 			{"id":"query","caption":"查询用户组","desc":"查询用户组","url":"/html/usergroup/usergroupQuery.html","method":"queryUsergroupCtrl","components":[
 				
-			]},
-			{"id":"edit","caption":"编辑用户组","desc":"编辑用户组","url":"/html/usergroup/usergroupEdit.html","method":"editUsergroupCtrl","components":[
-				
-			]},
-			{"id":"authorize","caption":"授权用户","desc":"授权用户","url":"/html/authorize/authorizeList.html","method":"authorizeCtrl","components":[
-				
-			]},
-			{"id":"user","caption":"用户管理","desc":"用户管理","url":"/html/usergroup/usergroupAddUser.html","method":"userManageCtrl","components":[
-				
 			]}
 		]},
 		{"module":"certificate","caption":"认证中心","desc":"认证中心","js":"/javascripts/smartcloud/certificateController.js","pages":[

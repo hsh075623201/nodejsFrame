@@ -23,7 +23,6 @@ exports.UserSchema = new mongoose.Schema({
     hidden:Boolean,
     roleArr:[{ type: mongoose.Schema.Types.ObjectId, ref: 'role' }],
     deptArr:[{ type: mongoose.Schema.Types.ObjectId, ref: 'dept' }],
-    usergroupArr:[{ type: mongoose.Schema.Types.ObjectId, ref: 'usergroup' }],
     menus:[],
     urls:[],
     components:[],

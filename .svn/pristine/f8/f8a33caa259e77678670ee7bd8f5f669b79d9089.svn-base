@@ -1,0 +1,12 @@
+/**
+* 用户组模型
+*/
+var mongoose = require('mongoose');
+
+exports.UsergroupSchema = new mongoose.Schema({
+    name: String,
+    code: String,
+    desc:String,
+    createUsername:String,
+    DateTime:{ type: Date, default: Date.now },
+});
